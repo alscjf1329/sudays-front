@@ -1,0 +1,22 @@
+{
+    "name": "sudays diary",
+    "short_name": "SUDAYS",
+    "description": "sudays diary",
+    "icons": [
+        {
+            "src": "/icons/sudays-icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/icons/sudays-icon-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "prefer_related_applications": true,
+    "start_url": "/",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "display": "standalone"
+}
