@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import InstallPopupUI from './components/install-popup';
 import LoadingBackground from "../components/layout/loading-backgroud";
+import InstallPopup from "./components/install-popup";
 
 export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
@@ -41,13 +41,16 @@ export default function Home() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       <p className="text-4xl font-bold">SUDAYS</p>
-      {(installable || isIOSDevice) && (
+      {installable && (
         <div className="block md:hidden">
           <LoadingBackground setIsOpen={setInstallable}>
-            <InstallPopupUI
-              installable={installable}
-              handleInstall={handleInstall}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <InstallPopup
+                installable={installable}
+                isIOSDevice={isIOSDevice}
+                handleInstall={handleInstall}
+              />
+            </div>
           </LoadingBackground>
         </div>
       )}
