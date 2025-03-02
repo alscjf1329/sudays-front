@@ -41,7 +41,7 @@ export default function Home() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       <p className="text-4xl font-bold">SUDAYS</p>
-      {installable && (
+      {(installable || isIOSDevice) && (
         <div className="block md:hidden">
           <LoadingBackground setIsOpen={setInstallable}>
             <InstallPopupUI
