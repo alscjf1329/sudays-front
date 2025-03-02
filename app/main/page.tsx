@@ -6,9 +6,14 @@ import LoadingBackground from "../components/layout/loading-backgroud";
 
 export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [isIOSDevice, setIsIOSDevice] = useState(false);
   const [installable, setInstallable] = useState(false);
 
   useEffect(() => {
+    const isDeviceIOS =
+      /iPad|iPhone|iPod/.test(window.navigator.userAgent) && !(window as any).MSStream;
+    setIsIOSDevice(isDeviceIOS);
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
