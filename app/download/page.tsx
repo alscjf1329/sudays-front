@@ -55,14 +55,13 @@ export default function Download() {
   };
 
   return installable && (
-    <div className="w-full h-full flex flex-col justify-center items-center">
-      <div onClick={(e) => e.stopPropagation()}>
-        <InstallPopup
-          installable={installable}
-          isIOSDevice={isIOSDevice}
-          handleInstall={handleInstall}
-        />
-      </div>
+    <div className="flex-1 flex flex-col justify-center items-center"
+      onClick={(e) => e.stopPropagation()}>
+      <InstallPopup
+        installable={installable}
+        isIOSDevice={isIOSDevice}
+        handleInstall={handleInstall}
+      />
     </div>
   );
 }

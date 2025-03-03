@@ -17,8 +17,29 @@
   }
 }
 
+/* 기본 테마 */
+.light {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --primary: #3b82f6;
+  --secondary: #f3f4f6;
+  --accent: #60a5fa;
+  --muted: #9ca3af;
+  --border: #e5e7eb;
+}
+
+/* 다크 모드 */
+.dark {
+  --background: #111827;
+  --foreground: #f9fafb;
+  --primary: #60a5fa;
+  --secondary: #1f2937;
+  --accent: #3b82f6;
+  --muted: #6b7280;
+  --border: #374151;
+}
+
 body {
+  background-color: var(--background);
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
