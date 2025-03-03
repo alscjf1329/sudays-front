@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",  // 사이트 루트(`/`) 접근 시
-        destination: "/main",  // `/main`으로 이동
-        permanent: true,  // 301 리다이렉트 (영구적 변경)
+        destination: "/download",
+        permanent: false,  // 301 리다이렉트 (영구적 변경)
       },
     ];
   },
