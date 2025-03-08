@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { WEEKDAYS } from "@/app/lib/constants/calendar";
+import LoadingBackground from "../../layout/loading-backgroud";
+import MonthPicker from "./month-picker";
 
 const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(date);
   const [slideDirection, setSlideDirection] = useState<"up" | "down" | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -95,11 +98,11 @@ const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
     for (let day = 1; day <= daysInMonth; day++) {
       const dayOfWeek = (firstDay + day - 1) % 7;
       const currentDateObj = new Date(date.getFullYear(), date.getMonth(), day);
-      
+
       const isToday = day === today.getDate() &&
         date.getMonth() === today.getMonth() &&
         date.getFullYear() === today.getFullYear();
-      
+
       const isSunday = dayOfWeek === 0;
       const isSaturday = dayOfWeek === 6;
       const isFutureDate = currentDateObj > today;
@@ -111,19 +114,15 @@ const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
           className="relative group flex items-center justify-center h-full"
         >
           <div className={`
-            aspect-square w-[90%] flex items-center justify-center rounded-full
+            aspect-square w-[90%] flex rounded-xl
             transition-all duration-200 text-lg font-medium
-            ${isToday
-              ? 'bg-primary text-primary-foreground font-bold scale-100'
-              : `
-                ${isFutureDate ? 'text-gray-500' : `
-                  ${isSunday ? 'text-red-500' : ''}
-                  ${isSaturday ? 'text-blue-500' : ''}
-                  ${!isSunday && !isSaturday ? 'text-foreground' : ''}
-                `}
-                hover:bg-muted/50 group-hover:scale-105
-              `
+            ${isFutureDate ? 'text-gray-500' : `
+              ${isSunday ? 'text-red-500' : ''}
+              ${isSaturday ? 'text-blue-500' : ''}
+              ${!isSunday && !isSaturday ? 'text-foreground' : ''}
+            `
             }
+            hover:text-foreground/50 hover:bg-[var(--hover)]
           `}>
             {day}
           </div>
@@ -140,7 +139,13 @@ const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="flex justify-between items-center w-full mb-6">
+      {
+        isOpen && (
+          <LoadingBackground setIsOpen={setIsOpen}>
+            <MonthPicker date={currentDate} setDate={setCurrentDate} />
+          </LoadingBackground>
+        )}
+      <div className="flex justify-between items-center w-full mb-6" onClick={() => setIsOpen(true)}>
         <h2 className="text-3xl font-bold text-foreground/90">
           {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
         </h2>
