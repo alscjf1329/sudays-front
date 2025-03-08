@@ -1,13 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import MonthPicker from "@/app/components/ui/calendar/month-picker";
-import MultiMonthCalendar from "../components/ui/calendar/multi-month-calendar";
-import SlidCalendar from "../components/ui/calendar/slid-calendar";
+import { useEffect, useRef } from "react";
+import SlideCalendar from "../components/ui/calendar/slide-calendar";
 
 export default function Diary() {
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,7 +25,7 @@ export default function Diary() {
 
   return (
     <div className="flex flex-col w-full h-full items-center justify-center scroll-y-auto" ref={containerRef}>
-      <SlidCalendar date={new Date()} />
+      <SlideCalendar date={new Date()} />
     </div>
   );
 }

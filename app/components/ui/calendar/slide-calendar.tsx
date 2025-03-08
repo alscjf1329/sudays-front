@@ -3,22 +3,35 @@
 import React, { useState, useEffect } from "react";
 import { WEEKDAYS } from "@/app/lib/constants/calendar";
 
-const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
+const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
   const [currentDate, setCurrentDate] = useState(date);
   const [slideDirection, setSlideDirection] = useState<"up" | "down" | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  // 마우스 휠 이벤트
+  const handleMonthChange = (direction: "up" | "down") => {
+    if (isAnimating) return;
+    setSlideDirection(direction);
+    setIsAnimating(true);
+
+    setTimeout(() => {
+      setCurrentDate(new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + (direction === "up" ? 1 : -1)
+      ));
+      setSlideDirection(null);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const handlePrevMonth = () => handleMonthChange("down");
+  const handleNextMonth = () => handleMonthChange("up");
+
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (isAnimating) return;
-
-      if (e.deltaY > 0) {
-        handleNextMonth();
-      } else if (e.deltaY < 0) {
-        handlePrevMonth();
+      if (!isAnimating) {
+        e.deltaY > 0 ? handleNextMonth() : handlePrevMonth();
       }
     };
 
@@ -26,7 +39,6 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
     return () => window.removeEventListener("wheel", handleWheel);
   }, [isAnimating]);
 
-  // 터치 이벤트 핸들러
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientY);
   };
@@ -39,42 +51,16 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;
-    if (distance > 50) {
-      handleNextMonth();
-    } else if (distance < -50) {
-      handlePrevMonth();
+    if (Math.abs(distance) > 50) {
+      distance > 0 ? handleNextMonth() : handlePrevMonth();
     }
 
     setTouchStart(null);
     setTouchEnd(null);
   };
 
-  const handlePrevMonth = () => {
-    if (isAnimating) return;
-    setSlideDirection("down");
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1) );
-      setSlideDirection(null);
-      setIsAnimating(false);
-    }, 300);
-  };
-
-  const handleNextMonth = () => {
-    if (isAnimating) return;
-    setSlideDirection("up");
-    setIsAnimating(true);
-
-    setTimeout(() => {
-      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-      setSlideDirection(null);
-      setIsAnimating(false);
-    }, 300);
-  };
-
-  const renderWeekdays = () => {
-    return WEEKDAYS.map((day, index) => (
+  const renderWeekdays = () => (
+    WEEKDAYS.map((day, index) => (
       <div
         key={`weekday-${index}`}
         className={`
@@ -86,10 +72,11 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
       >
         {day}
       </div>
-    ));
-  };
+    ))
+  );
 
   const renderDays = (date: Date) => {
+    const today = new Date();
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     const days = [];
@@ -105,18 +92,18 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
     }
 
     // 날짜 렌더링
-    const today = new Date();
     for (let day = 1; day <= daysInMonth; day++) {
       const dayOfWeek = (firstDay + day - 1) % 7;
-      const isSunday = dayOfWeek === 0;
-      const isSaturday = dayOfWeek === 6;
+      const currentDateObj = new Date(date.getFullYear(), date.getMonth(), day);
       
       const isToday = day === today.getDate() &&
         date.getMonth() === today.getMonth() &&
         date.getFullYear() === today.getFullYear();
-
-      const currentDateObj = new Date(date.getFullYear(), date.getMonth(), day);
+      
+      const isSunday = dayOfWeek === 0;
+      const isSaturday = dayOfWeek === 6;
       const isFutureDate = currentDateObj > today;
+      const isSmallerThanToday = day < today.getDate();
 
       days.push(
         <div
@@ -129,7 +116,7 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
             ${isToday
               ? 'bg-primary text-primary-foreground font-bold scale-100'
               : `
-                ${isFutureDate ? 'text-foreground/30' : `
+                ${isFutureDate || isSmallerThanToday ? 'text-foreground/30' : `
                   ${isSunday ? 'text-red-500' : ''}
                   ${isSaturday ? 'text-blue-500' : ''}
                   ${!isSunday && !isSaturday ? 'text-foreground' : ''}
@@ -143,7 +130,6 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
         </div>
       );
     }
-
     return days;
   };
 
@@ -179,4 +165,4 @@ const SlidCalendar: React.FC<{ date: Date }> = ({ date }) => {
   );
 };
 
-export default SlidCalendar;
+export default SlideCalendar;
