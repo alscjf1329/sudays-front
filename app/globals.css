@@ -26,6 +26,7 @@
   --accent: #60a5fa;
   --muted: #9ca3af;
   --border: #e5e7eb;
+  --hover: #f3f4f6;
 }
 
 /* 다크 모드 */
@@ -37,6 +38,7 @@
   --accent: #3b82f6;
   --muted: #6b7280;
   --border: #374151;
+  --hover: #222222;
 }
 
 body {
