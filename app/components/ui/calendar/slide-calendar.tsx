@@ -116,7 +116,7 @@ const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
             ${isToday
               ? 'bg-primary text-primary-foreground font-bold scale-100'
               : `
-                ${isFutureDate || isSmallerThanToday ? 'text-foreground/30' : `
+                ${isFutureDate ? 'text-gray-500' : `
                   ${isSunday ? 'text-red-500' : ''}
                   ${isSaturday ? 'text-blue-500' : ''}
                   ${!isSunday && !isSaturday ? 'text-foreground' : ''}
