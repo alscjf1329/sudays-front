@@ -24,7 +24,7 @@ export default function Diary() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full items-center justify-center scroll-y-auto" ref={containerRef}>
+    <div className="flex flex-col w-full h-full items-center justify-center" ref={containerRef}>
       <SlideCalendar date={new Date()} />
     </div>
   );
