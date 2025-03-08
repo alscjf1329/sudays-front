@@ -24,8 +24,17 @@ export default function Diary() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full items-center justify-center" ref={containerRef}>
-      <SlideCalendar date={new Date()} />
+    <div 
+      className="flex flex-col w-full h-full items-center justify-center overflow-hidden" 
+      ref={containerRef}
+      onWheel={(e) => e.stopPropagation()}
+    >
+      <div 
+        className="overflow-y-auto overscroll-contain"
+        onTouchMove={(e) => e.stopPropagation()}
+      >
+        <SlideCalendar date={new Date()} />
+      </div>
     </div>
   );
 }
