@@ -24,17 +24,12 @@ export default function Diary() {
   }, []);
 
   return (
-    <div 
-      className="flex flex-col w-full h-full items-center justify-center overflow-hidden" 
+    <div
+      className="flex flex-col w-full h-full items-center justify-center overflow-y-auto"
       ref={containerRef}
-      onWheel={(e) => e.stopPropagation()}
+      style={{ overscrollBehavior: 'contain' }}
     >
-      <div 
-        className="overflow-y-auto overscroll-contain"
-        onTouchMove={(e) => e.stopPropagation()}
-      >
-        <SlideCalendar date={new Date()} />
-      </div>
+      <SlideCalendar date={new Date()} />
     </div>
   );
 }
