@@ -6,7 +6,13 @@
         {
             "src": "/icons/sudays-icon-192.png",
             "type": "image/png",
-            "sizes": "192x192"
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/sudays-icon-96.png",
+            "type": "image/png",
+            "sizes": "96x96"
         },
         {
             "src": "/icons/sudays-icon-512.png",
@@ -14,9 +20,12 @@
             "sizes": "512x512"
         }
     ],
-    "prefer_related_applications": true,
-    "start_url": "/main",
+    "prefer_related_applications": false,
+    "start_url": "/diary",
     "background_color": "#ffffff",
     "theme_color": "#000000",
-    "display": "standalone"
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "ko"
 }
