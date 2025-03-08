@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean }> = ({ date, readOnly = false }) => {
+const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean, onClick?: () => void }> = ({ date, readOnly = false, onClick }) => {
   const [currentDate, setCurrentDate] = useState(date);
 
   const handlePrevMonth = () => {

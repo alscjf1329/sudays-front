@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import MonthCalendar from "./month-calendar";
 
-const MultiMonthCalendar: React.FC<{ date: Date, numMonths: number }> = ({ date, numMonths }) => {
+const MultiMonthCalendar: React.FC<{ date: Date, numMonths: number, onClick?: () => void }> = ({ date, numMonths, onClick }) => {
   const [currentDate, setCurrentDate] = useState(date);
 
   const renderMonths = () => {
@@ -12,7 +12,7 @@ const MultiMonthCalendar: React.FC<{ date: Date, numMonths: number }> = ({ date,
       const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + i);
 
       months.push(
-        <MonthCalendar key={i} date={monthDate} readOnly={true}/>
+        <MonthCalendar key={i} date={monthDate} readOnly={true} onClick={onClick}/>
       );
     }
     return months;
