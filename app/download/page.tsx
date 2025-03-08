@@ -4,59 +4,69 @@ import { useEffect, useState } from "react";
 import InstallPopup from "./components/install-popup";
 
 function isPWA() {
-  if (window.matchMedia('(display-mode: standalone)').matches)
-    return true;
-  if ((window as any).standalone === true)
-    return true;
-  else
-    return false;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true
+  );
 }
 
 export default function Download() {
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
   const [installable, setInstallable] = useState(false);
 
   useEffect(() => {
-    setInstallable(!isPWA());
-    setIsIOSDevice(/iPad|iPhone|iPod/.test(window.navigator.userAgent) && !(window as any).MSStream);
-  }, []);
+    const checkDevice = () => {
+      const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+      setIsIOSDevice(ios);
+      setInstallable(!isPWA());
+    };
 
-  useEffect(() => {
-    if (isIOSDevice) {
-      setInstallable(true);
+    if (!deferredPrompt) {
+      window.location.href = '/diary';
       return;
     }
 
-    const handler = (e: Event) => {
+    checkDevice();
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
       setInstallable(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     };
-  }, [isIOSDevice]);
+  }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
 
-    (deferredPrompt as any).prompt();
-    const { outcome } = await (deferredPrompt as any).userChoice;
-    console.log("User response to install prompt:", outcome);
-
-    window.location.href = '/main';
-
-    setDeferredPrompt(null);
-    setInstallable(false);
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setInstallable(false);
+        window.location.href = '/diary';
+      }
+    } catch (error) {
+      console.error('Installation failed:', error);
+    }
   };
 
-  return installable && (
-    <div className="flex-1 flex flex-col justify-center items-center"
-      onClick={(e) => e.stopPropagation()}>
+  if (!installable) return null;
+
+  return (
+    <div 
+      className="flex-1 flex flex-col justify-center items-center"
+      onClick={(e) => e.stopPropagation()}
+    >
       <InstallPopup
         installable={installable}
         isIOSDevice={isIOSDevice}

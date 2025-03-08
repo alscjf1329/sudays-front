@@ -54,7 +54,7 @@ const MobileInstallPopup = ({ handleInstall, isIOSDevice }: { handleInstall: () 
                     앱 이용하기
                 </button>
             </div>
-            <div className="text-[var(--primary)] hover:text-[var(--accent)] hover:cursor-pointer hover:underline transition-colors duration-200" onClick={() => window.location.href = '/main'}>
+            <div className="text-[var(--primary)] hover:text-[var(--accent)] hover:cursor-pointer hover:underline transition-colors duration-200" onClick={() => window.location.href = '/diary'}>
                 웹으로 그냥 보기
             </div>
         </div>
