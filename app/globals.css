@@ -20,24 +20,30 @@
 /* 기본 테마 */
 .light {
   --background: #ffffff;
-  --foreground: #1a1a1a;
+  --background-secondary: #f8f8f8;
+  --highlight: #FF4539;
+  --foreground: #171717;
   --primary: #3b82f6;
   --secondary: #f3f4f6;
   --accent: #60a5fa;
   --muted: #9ca3af;
-  --border: #e5e7eb;
-  --hover: #f3f4f6;
+  --border: #e5e5e5;
+  --light-border: #f0f0f0;
+  --hover: #f5f5f5;
 }
 
 /* 다크 모드 */
 .dark {
-  --background: #111827;
+  --background: #000000;
+  --background-secondary: #161616;
+  --highlight: #FF4539;
   --foreground: #f9fafb;
   --primary: #60a5fa;
   --secondary: #1f2937;
   --accent: #3b82f6;
   --muted: #6b7280;
-  --border: #374151;
+  --border: #2B2B2B;
+  --light-border: #1F1F21;
   --hover: #222222;
 }
 
