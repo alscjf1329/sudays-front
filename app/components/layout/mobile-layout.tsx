@@ -7,11 +7,7 @@ type MobileLayoutProps = {
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
   return (
-    <div className="flex flex-col h-full">
-      <TopBar>
-        <ThemeSwitcher />
-      </TopBar>
-      <TopBarContainer />
+    <div className="flex flex-col min-h-screen h-full">
       <main className="flex-1 overflow-hidden">
         {children}
       </main>
