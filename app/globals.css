@@ -20,6 +20,7 @@
 /* 기본 테마 */
 .light {
   --background: #ffffff;
+  --menu-color: #FF4539;
   --background-secondary: #f8f8f8;
   --highlight: #FF4539;
   --foreground: #171717;
@@ -35,6 +36,7 @@
 /* 다크 모드 */
 .dark {
   --background: #000000;
+  --menu-color: #FF4539;
   --background-secondary: #161616;
   --highlight: #FF4539;
   --foreground: #f9fafb;

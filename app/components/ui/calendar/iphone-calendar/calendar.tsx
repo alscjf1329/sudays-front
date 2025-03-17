@@ -3,12 +3,20 @@
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
+import ArrowLeftIcon from "../../icons/arrow-left-icon";
+import { redirect } from "next/navigation";
+import { MenuBar } from "./menu-bar";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_TO_SHOW = 12;
 
-const BaseIphoneCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface IphoneCalendarProps {
+  year: number;
+  month: number;
+}
+
+const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month }) => {
+  const [currentDate, setCurrentDate] = useState(new Date(year, month - 1, 1));
   const [cellHeight, setCellHeight] = useState(0);
   const [months, setMonths] = useState<Date[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,7 +80,7 @@ const BaseIphoneCalendar = () => {
    * ✅ 초기 월 리스트 생성 및 스크롤 위치 조정
    */
   useEffect(() => {
-    const baseDate = new Date();
+    const baseDate = new Date(year, month - 1, 1);
     const monthsList = [];
 
     for (let i = -MONTHS_TO_SHOW; i <= MONTHS_TO_SHOW; i++) {
@@ -228,7 +236,11 @@ const BaseIphoneCalendar = () => {
         data-year={monthDate.getFullYear()}
         data-month={monthDate.getMonth()}
       >
-        <h2 className="text-2xl font-bold tracking-tight text-background mb-2">
+        <h2 className={clsx(
+          "text-2xl font-bold tracking-tight text-background mb-2 p-2",
+          (monthDate.getFullYear() === today.getFullYear() &&
+            monthDate.getMonth() === today.getMonth()) && "text-[var(--highlight)]"
+        )}>
           {monthDate.getFullYear()}년 {monthDate.getMonth() + 1}월
         </h2>
         <div className="grid grid-cols-7">{days}</div>
@@ -332,11 +344,14 @@ const BaseIphoneCalendar = () => {
       className="flex flex-col w-full overflow-y-auto relative"
       style={{ height: containerHeight ? `${containerHeight}px` : "auto" }}
     >
-      <div className="sticky top-0 bg-[var(--background-secondary)] z-50 flex flex-col border-[var(--border)]">
-        <h2 className="text-2xl font-bold tracking-tight text-background">
-          {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-        </h2>
-        <div className="grid grid-cols-7 mt-4 border-b border-[var(--border)]">
+      <div className="sticky top-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm z-50 flex flex-col border-[var(--border)]">
+        <div className="flex flex-col p-2">
+          <MenuBar currentDate={currentDate} />
+          <div className="text-2xl font-bold mt-2">
+            {currentDate.getMonth() + 1}월
+          </div>
+        </div>
+        <div className="grid grid-cols-7 border-b border-[var(--border)]">
           {renderWeekdays()}
         </div>
       </div>

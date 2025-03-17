@@ -1,9 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import IphoneCalendar from "../components/ui/calendar/ipone-calendar";
+import IphoneCalendar from "../components/ui/calendar/iphone-calendar/calendar";
 export default function Diary() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const today = new Date();
 
   return (
     <div
@@ -12,7 +13,7 @@ export default function Diary() {
       style={{ overscrollBehavior: 'contain' }}
     >
       <div className="flex-1">
-        <IphoneCalendar />
+        <IphoneCalendar year={today.getFullYear()} month={today.getMonth() + 1} />
       </div>
     </div>
   );
