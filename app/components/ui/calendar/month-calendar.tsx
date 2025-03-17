@@ -1,9 +1,13 @@
 "use client";
 
+import clsx from "clsx";
 import React, { useState } from "react";
 
-const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean, onClick?: () => void }> = ({ date, readOnly = false, onClick }) => {
+const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean, hover?: boolean, onClick?: () => void }> = ({ date, readOnly = false, hover = false, onClick }) => {
   const [currentDate, setCurrentDate] = useState(date);
+  const currentYear = Number(new Date().getFullYear());
+  const currentMonth = Number(new Date().getMonth());
+  const currentDay = Number(new Date().getDate());
 
   const handlePrevMonth = () => {
     setCurrentDate(
@@ -36,7 +40,12 @@ const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean, onClick?: () => 
 
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(
-        <div key={day} className="day">
+        <div key={day} className={clsx(
+          "text-center text-[3vmin] aspect-square flex items-center justify-center rounded-full",
+          (currentYear === Number(currentDate.getFullYear()) &&
+            currentMonth === Number(currentDate.getMonth()) &&
+            day === currentDay) && "bg-[var(--highlight)] text-white"
+        )}>
           {day}
         </div>
       );
@@ -46,33 +55,42 @@ const MonthCalendar: React.FC<{ date: Date, readOnly?: boolean, onClick?: () => 
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex justify-between items-center p-2">
-        {!readOnly && (
+    <div className={clsx(
+      "flex flex-col w-full rounded-lg",
+      hover && "hover:bg-[var(--hover)]"
+    )}>
+      {!readOnly && (
+        <div className="flex justify-between items-center">
           <>
             <button
-              className="bg-primary py-2 px-5 mr-2 rounded-full hover:bg-primary-hover"
+              className="bg-primary rounded-full hover:bg-primary-hover w-[20vmin] text-[3vmin]"
               onClick={handlePrevMonth}
             >
               이전
             </button>
           </>
-        )}
-        <h2 className="text-2xl font-bold">
-          {currentDate.getFullYear()}.{currentDate.getMonth() + 1}
-        </h2>
-        {!readOnly && (
-          <>  
+          <div className="text-[4vmin] font-bold">
+            {currentDate.getMonth() + 1}월
+          </div>
+          <>
             <button
-              className="bg-primary py-2 px-5 ml-2 rounded-full hover:bg-primary-hover"
+              className="bg-primary rounded-full hover:bg-primary-hover w-[20vmin] text-[3vmin]"
               onClick={handleNextMonth}
             >
               다음
             </button>
           </>
-        )}
-      </div>
-      <div className="grid grid-cols-7 gap-2 p-5">{renderDays()}</div>
+        </div>
+      )}
+      {readOnly && (
+        <div className={clsx(
+          "text-[4vmin] font-bold",
+          (currentYear === Number(currentDate.getFullYear()) && currentMonth === Number(currentDate.getMonth())) && "text-[var(--highlight)]"
+        )}>
+          {currentDate.getMonth() + 1}월
+        </div>
+      )}
+      <div className="grid grid-cols-7 md:gap-2">{renderDays()}</div>
     </div>
   );
 };
