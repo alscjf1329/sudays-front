@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import InstallPopup from "./components/install-popup";
+import { redirect } from "next/navigation";
 
 function isPWA() {
   return (
@@ -11,6 +12,7 @@ function isPWA() {
 }
 
 export default function Download() {
+  const today = new Date();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOSDevice, setIsIOSDevice] = useState(false);
   const [installable, setInstallable] = useState(false);
@@ -23,8 +25,7 @@ export default function Download() {
     };
 
     if (!deferredPrompt) {
-      window.location.href = '/diary';
-      return;
+      redirect(`/diary/${today.getFullYear()}/${today.getMonth() + 1}`);
     }
 
     checkDevice();
@@ -53,7 +54,7 @@ export default function Download() {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
         setInstallable(false);
-        window.location.href = '/diary';
+        redirect(`/diary/${today.getFullYear()}/${today.getMonth() + 1}`);
       }
     } catch (error) {
       console.error('Installation failed:', error);

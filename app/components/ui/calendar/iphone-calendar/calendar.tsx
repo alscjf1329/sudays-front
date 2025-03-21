@@ -3,8 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import ArrowLeftIcon from "../../icons/arrow-left-icon";
-import { redirect } from "next/navigation";
 import { MenuBar } from "./menu-bar";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -13,9 +11,10 @@ const MONTHS_TO_SHOW = 12;
 interface IphoneCalendarProps {
   year: number;
   month: number;
+  onClick?: (date: Date) => void;
 }
 
-const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month }) => {
+const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month, onClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date(year, month - 1, 1));
   const [cellHeight, setCellHeight] = useState(0);
   const [months, setMonths] = useState<Date[]>([]);
@@ -197,6 +196,9 @@ const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month }) => {
       days.push(
         <div
           key={`current-${monthDate.getTime()}-${day}`}
+          onClick={() => {
+            onClick?.(new Date(monthDate.getFullYear(), monthDate.getMonth(), day));
+          }}
           style={{ height: `${cellHeight}px` }}
           className={clsx(
             "flex items-center justify-center relative",
