@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
+import { createPortal } from 'react-dom';
 
 import {
   DndContext,
@@ -24,10 +25,12 @@ import XIcon from '../icons/x-icon';
 import DragHandleIcon from '../icons/drag-handle-icon';
 import PictureIcon from '../icons/picture-icon';
 import CheckIcon from '../icons/check-icon';
+import LoadingLayout from '../../layout/loading-layout';
+import LoadingBackground from '../../layout/loading-backgroud';
+import ArrowLeftIcon from '../icons/arrow-left-icon';
 
 interface DiaryFormProps {
   onSubmit: (data: {
-    title: string;
     content: string;
     images: File[];
   }) => void;
@@ -57,6 +60,24 @@ function SortableImage({
     transition
   } = useSortable({ id: image.id });
 
+  const [isLongPressed, setIsLongPressed] = useState(false);
+  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const startPressTimer = () => {
+    if (pressTimerRef.current) return;
+    pressTimerRef.current = setTimeout(() => {
+      setIsLongPressed(true);
+    }, 500); // 1초 후 활성화
+  };
+
+  const clearPressTimer = () => {
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+  };
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -70,24 +91,37 @@ function SortableImage({
       ref={setNodeRef}
       style={style}
       className="relative flex-shrink-0 rounded-lg overflow-hidden border border-border select-none"
+      onMouseDown={startPressTimer}
+      onMouseUp={clearPressTimer}
+      onMouseLeave={clearPressTimer}
+      onTouchStart={startPressTimer}
+      onTouchEnd={clearPressTimer}
+      onTouchCancel={clearPressTimer}
     >
+      {/* 길게 눌렀을 때 */}
+      {isLongPressed && (
+        <LoadingLayout setIsOpen={() => { setIsLongPressed(false) }}>
+          <div
+            {...attributes}
+            {...listeners}
+            className="absolute left-1 top-1 z-10 w-5 h-5 bg-gray-500 text-white rounded-full flex items-center justify-center p-1 cursor-move"
+          >
+            <DragHandleIcon />
+          </div>
+          <button
+            type="button"
+            onClick={(e) => handleRemove(image.id, e)}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex bg-gray-500/50 w-1/2 h-1/2 rounded-full items-center justify-center p-3"
+          >
+            <XIcon />
+          </button>
+        </LoadingLayout>
+      )}
+
       <div
-        {...attributes}
-        {...listeners}
-        className="absolute left-1 top-1 z-10 w-5 h-5 bg-gray-500 text-white rounded-full flex items-center justify-center p-1 cursor-move"
+        className="relative w-full h-full cursor-pointer"
+        onClick={() => setShowModal(true)}
       >
-        <DragHandleIcon />
-      </div>
-
-      <button
-        type="button"
-        onClick={(e) => handleRemove(image.id, e)}
-        className="absolute right-1 top-1 z-10 bg-[var(--highlight)] text-white rounded-full w-5 h-5 flex items-center justify-center p-1"
-      >
-        <XIcon />
-      </button>
-
-      <div className="relative w-full h-full pointer-events-none">
         <Image
           src={image.preview}
           alt="미리보기"
@@ -96,6 +130,25 @@ function SortableImage({
           draggable={false}
         />
       </div>
+      {showModal && createPortal(
+        <LoadingBackground setIsOpen={() => setShowModal(false)}>
+          <button type="button" className="fixed top-0 left-0 w-10 h-10 flex items-center justify-center"
+            onClick={() => setShowModal(false)}
+          >
+            <ArrowLeftIcon />
+          </button>
+          <div className="relative w-[80vw] h-[80vh] max-w-4xl max-h-[80vh]">
+            <Image
+              src={image.preview}
+              alt="미리보기"
+              fill
+              className="object-contain"
+              draggable={false}
+            />
+          </div>
+        </LoadingBackground>,
+        document.body
+      )}
     </div>
   );
 }
@@ -197,7 +250,7 @@ function ImageUpload({
         disabled={imageList.length >= MAX_IMAGES}
         className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
       />
-      <div className="w-full p-2 rounded-lg border border-border flex items-center">
+      <div className="w-full p-2 rounded-lg border border-[var(--border)] flex items-center">
         <span className="bg-highlight text-white py-2 px-4 rounded-lg mr-4 text-sm font-medium">
           사진 추가하기
         </span>
@@ -210,7 +263,6 @@ function ImageUpload({
 }
 
 export default function DiaryForm({ onSubmit }: DiaryFormProps) {
-  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [imageList, setImageList] = useState<ImageData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -226,7 +278,6 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
     })
   );
 
-  // ✅ visualViewport 사용해서 하단 고정바 위치 조정
   useEffect(() => {
     if (typeof window === 'undefined' || !window.visualViewport) return;
 
@@ -294,7 +345,6 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      title,
       content,
       images: imageList.map(img => img.file)
     });
@@ -322,30 +372,9 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
     <>
       <form
         onSubmit={handleSubmit}
-        className="w-full h-full flex flex-col p-6 gap-4 overflow-y-auto relative pb-20"
+        className="w-full h-full flex flex-col p-2 gap-4 overflow-y-auto relative pb-20"
       >
         <div className="w-full">
-          <label htmlFor="title" className="block text-lg font-medium mb-2 text-foreground">
-            제목
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted"
-            required
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck="false"
-          />
-        </div>
-
-        <div className="w-full">
-          <label htmlFor="image" className="block text-lg font-medium mb-2 text-foreground">
-            사진
-          </label>
           <div className="w-full">
             <div className="hidden md:block">
               <ImageUpload
@@ -353,7 +382,7 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
                 handleImageChange={handleImageChange}
               />
             </div>
-            <div className="mt-4 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+            <div className="mt-4 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-[var(--border)] scrollbar-track-[var(--background-secondary)]">
               <ImageList
                 imageList={imageList}
                 handleRemoveImage={handleRemoveImage}
@@ -366,19 +395,17 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
           </div>
         </div>
         <div className="w-full flex-1">
-          <label htmlFor="content" className="block text-lg font-medium mb-2 text-foreground">
-            내용
-          </label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full h-[calc(100%-2rem)] p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted resize-none"
+            className="w-full h-[calc(100%-2rem)] p-2 rounded-lg focus:outline-none placeholder:text-gray-400 resize-none"
             required
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
+            placeholder="일상을 기록해보세요."
           />
         </div>
 
@@ -392,7 +419,6 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
         </div>
       </form>
 
-      {/* ✅ 하단바 (fixed) - visualViewport 기반 위치 조정 */}
       <div
         className="md:hidden fixed left-0 right-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm border-t border-[var(--border)] p-2"
         style={{
@@ -401,11 +427,19 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
-        <div className="flex justify-between items-center">
-          <div className="w-8 h-8 cursor-pointer" onClick={handleMobileImageClick}>
+        <div className="flex justify-between items-center p-1">
+          <div
+            className="cursor-pointer"
+            style={{ width: '24px', height: '24px' }}
+            onClick={handleMobileImageClick}
+          >
             <PictureIcon />
           </div>
-          <div className="w-8 h-8 cursor-pointer" onClick={handleSubmit}>
+          <div
+            className="cursor-pointer"
+            style={{ width: '24px', height: '24px' }}
+            onClick={handleSubmit}
+          >
             <CheckIcon />
           </div>
         </div>

@@ -1,4 +1,4 @@
-const LoadingBackground: React.FC<{ 
+const LoadingLayout: React.FC<{
   children: React.ReactNode;
   setIsOpen: (isOpen: boolean) => void;
 }> = ({ children, setIsOpen }) => {
@@ -10,7 +10,7 @@ const LoadingBackground: React.FC<{
 
   return (
     <div
-      className="fixed inset-0 flex flex-col justify-center items-center bg-black/50 backdrop-blur-sm z-50"
+      className="absolute inset-0 bg-black/50 backdrop-blur-sm w-full h-full flex flex-col justify-center items-center z-50"
       onClick={handleBackgroundClick}
     >
       <div onClick={(e) => e.stopPropagation()}>
@@ -20,4 +20,4 @@ const LoadingBackground: React.FC<{
   );
 };
 
-export default LoadingBackground;
+export default LoadingLayout;

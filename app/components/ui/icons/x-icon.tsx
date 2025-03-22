@@ -5,7 +5,7 @@ const XIcon = () => {
         <img
             src={"/icons/x-icon.png"}
             alt="x"
-            className="h-full"
+            className="h-full w-full"
         />
     );
 };
