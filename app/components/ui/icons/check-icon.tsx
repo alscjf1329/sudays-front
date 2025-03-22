@@ -3,14 +3,19 @@
 import { useTheme } from "next-themes";
 
 const CheckIcon = () => {
-    const { theme } = useTheme();
+    const { theme, systemTheme } = useTheme();
+    
+    const isDarkMode = theme === 'system' 
+        ? systemTheme === 'dark'
+        : theme === 'dark';
+
+    const iconPath = isDarkMode 
+        ? "/icons/check/check-icon-dark.png"
+        : "/icons/check/check-icon.png";
 
     return (
         <img
-            src={theme === 'dark'
-                ? "/icons/check/check-icon-dark.png"
-                : "/icons/check/check-icon.png"
-            }
+            src={iconPath}
             alt="check"
             className="w-full"
         />

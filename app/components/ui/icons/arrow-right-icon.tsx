@@ -3,14 +3,19 @@
 import { useTheme } from "next-themes";
 
 const ArrowRightIcon = () => {
-    const { theme } = useTheme();
+    const { theme, systemTheme } = useTheme();
+    
+    const isDarkMode = theme === 'system' 
+        ? systemTheme === 'dark'
+        : theme === 'dark';
+
+    const iconPath = isDarkMode 
+        ? "/icons/arrow/arrow-right-dark.png"
+        : "/icons/arrow/arrow-right.png";
 
     return (
         <img
-            src={theme === 'dark'
-                ? "/icons/arrow/arrow-right-dark.png"
-                : "/icons/arrow/arrow-right.png"
-            }
+            src={iconPath}
             alt="arrow-right"
             className="h-full"
         />
