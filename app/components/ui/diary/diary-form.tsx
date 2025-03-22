@@ -365,7 +365,6 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
             </div>
           </div>
         </div>
-
         <div className="w-full flex-1">
           <label htmlFor="content" className="block text-lg font-medium mb-2 text-foreground">
             내용
