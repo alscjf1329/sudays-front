@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -214,6 +214,7 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
   const [content, setContent] = useState('');
   const [imageList, setImageList] = useState<ImageData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [bottomOffset, setBottomOffset] = useState(0);
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -224,6 +225,26 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
       }
     })
   );
+
+  // ✅ visualViewport 사용해서 하단 고정바 위치 조정
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return;
+
+    const onViewportChange = () => {
+      const heightDiff = window.innerHeight - (window.visualViewport?.height ?? 0);
+      setBottomOffset(heightDiff > 0 ? heightDiff : 0);
+    };
+
+    window.visualViewport.addEventListener('resize', onViewportChange);
+    window.visualViewport.addEventListener('scroll', onViewportChange);
+
+    onViewportChange();
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', onViewportChange);
+      window.visualViewport?.removeEventListener('scroll', onViewportChange);
+    };
+  }, []);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -253,10 +274,21 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
     e.target.value = '';
   };
 
+  const handleMobileImageClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = (e) => {
+      const event = e as unknown as React.ChangeEvent<HTMLInputElement>;
+      handleImageChange(event);
+    };
+    input.click();
+  };
+
   const handleRemoveImage = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
     e.preventDefault();
-    setImageList(currentList => currentList.filter((img) => img.id !== id));
+    setImageList(prev => prev.filter(img => img.id !== id));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -286,94 +318,98 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
     document.body.style.overflow = '';
   };
 
-  const handleMobileImageClick = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true;
-    input.onchange = (e) => {
-      const event = e as unknown as React.ChangeEvent<HTMLInputElement>;
-      handleImageChange(event);
-    };
-    input.click();
-  };
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full h-full flex flex-col p-6 gap-4 overflow-y-auto relative pb-20"
-      onWheel={(e) => e.stopPropagation()}
-      onTouchMove={(e) => e.stopPropagation()}
-    >
-      <div className="w-full">
-        <label htmlFor="title" className="block text-lg font-medium mb-2 text-foreground">
-          제목
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted"
-          required
-        />
-      </div>
-
-      <div className="w-full">
-        <label htmlFor="image" className="block text-lg font-medium mb-2 text-foreground">
-          사진
-        </label>
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full h-full flex flex-col p-6 gap-4 overflow-y-auto relative pb-20"
+      >
         <div className="w-full">
-          <div className="hidden md:block">
-            <ImageUpload
-              imageList={imageList}
-              handleImageChange={handleImageChange}
-            />
-          </div>
-          <div className="mt-4 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-            <ImageList
-              imageList={imageList}
-              handleRemoveImage={handleRemoveImage}
-              sensors={sensors}
-              handleDragStart={handleDragStart}
-              handleDragEnd={handleDragEnd}
-              activeId={activeId}
-            />
+          <label htmlFor="title" className="block text-lg font-medium mb-2 text-foreground">
+            제목
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted"
+            required
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+          />
+        </div>
+
+        <div className="w-full">
+          <label htmlFor="image" className="block text-lg font-medium mb-2 text-foreground">
+            사진
+          </label>
+          <div className="w-full">
+            <div className="hidden md:block">
+              <ImageUpload
+                imageList={imageList}
+                handleImageChange={handleImageChange}
+              />
+            </div>
+            <div className="mt-4 w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+              <ImageList
+                imageList={imageList}
+                handleRemoveImage={handleRemoveImage}
+                sensors={sensors}
+                handleDragStart={handleDragStart}
+                handleDragEnd={handleDragEnd}
+                activeId={activeId}
+              />
+            </div>
           </div>
         </div>
-      </div>
+        <div className="w-full flex-1">
+          <label htmlFor="content" className="block text-lg font-medium mb-2 text-foreground">
+            내용
+          </label>
+          <textarea
+            id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full h-[calc(100%-2rem)] p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted resize-none"
+            required
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+          />
+        </div>
 
-      <div className="w-full flex-1">
-        <label htmlFor="content" className="block text-lg font-medium mb-2 text-foreground">
-          내용
-        </label>
-        <textarea
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full h-[calc(100%-2rem)] p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted resize-none"
-          required
-        />
-      </div>
+        <div className="hidden md:block md:w-full">
+          <button
+            type="submit"
+            className="w-full flex justify-center items-center p-4 rounded-lg bg-[var(--highlight-secondary)] text-white font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight"
+          >
+            저장하기
+          </button>
+        </div>
+      </form>
 
-      <div className="hidden md:block md:w-full">
-        <button
-          type="submit"
-          className="w-full flex justify-center items-center p-4 rounded-lg bg-[var(--highlight-secondary)] text-white font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight"
-        >
-          저장하기
-        </button>
-      </div>
-      <div className="md:hidden fixed bottom-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm left-0 right-0 bg-blur-sm border-t border-[var(--border)] p-2">
+      {/* ✅ 하단바 (fixed) - visualViewport 기반 위치 조정 */}
+      <div
+        className="md:hidden fixed left-0 right-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm border-t border-[var(--border)] p-2"
+        style={{
+          bottom: `${bottomOffset}px`,
+          zIndex: 50,
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
+      >
         <div className="flex justify-between items-center">
           <div className="w-8 h-8 cursor-pointer" onClick={handleMobileImageClick}>
             <PictureIcon />
           </div>
-          <div className="w-8 h-8" onClick={handleSubmit}>
+          <div className="w-8 h-8 cursor-pointer" onClick={handleSubmit}>
             <CheckIcon />
           </div>
         </div>
       </div>
-    </form>
+    </>
   );
 }
