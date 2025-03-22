@@ -361,6 +361,7 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
           autoCorrect ="off"
           autoCapitalize="off"
           spellCheck="false"
+          
         />
       </div>
 
