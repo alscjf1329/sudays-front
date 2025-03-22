@@ -316,6 +316,10 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted"
           required
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
         />
       </div>
 
@@ -353,6 +357,10 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
           onChange={(e) => setContent(e.target.value)}
           className="w-full h-[calc(100%-2rem)] p-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-highlight placeholder:text-muted resize-none"
           required
+          autoComplete="off"
+          autoCorrect ="off"
+          autoCapitalize="off"
+          spellCheck="false"
         />
       </div>
 
