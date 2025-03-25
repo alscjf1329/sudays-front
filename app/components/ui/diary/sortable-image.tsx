@@ -8,7 +8,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import DragHandleIcon from '../icons/drag-handle-icon';
 import XIcon from '../icons/x-icon';
-import ArrowLeftIcon from '../icons/arrow-left-icon';
+import { WhiteArrowLeftIcon } from '../icons/arrow-left-icon';
 import LoadingLayout from '../../layout/loading-layout';
 import LoadingBackground from '../../layout/loading-backgroud';
 import { ImageData, IMAGE_PREVIEW_SIZE } from './types';
@@ -57,7 +57,7 @@ export default function SortableImage({ image, handleRemove }: SortableImageProp
     <div
       ref={setNodeRef}
       style={style}
-      className="relative flex-shrink-0 rounded-lg overflow-hidden border border-border select-none"
+      className="relative flex-shrink-0 rounded-lg overflow-hidden border border-[var(--border)] select-none"
       onMouseDown={startPressTimer}
       onMouseUp={clearPressTimer}
       onMouseLeave={clearPressTimer}
@@ -103,7 +103,7 @@ export default function SortableImage({ image, handleRemove }: SortableImageProp
             className="fixed top-0 left-0 w-10 h-10 flex items-center justify-center"
             onClick={() => setShowModal(false)}
           >
-            <ArrowLeftIcon />
+            <WhiteArrowLeftIcon />
           </button>
           <div className="relative w-[80vw] h-[80vh] max-w-4xl max-h-[80vh]">
             <Image

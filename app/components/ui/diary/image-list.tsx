@@ -67,7 +67,7 @@ export default function ImageList({
       <DragOverlay>
         {activeId && (
           <div
-            className="relative flex-shrink-0 rounded-lg overflow-hidden border border-border"
+            className="relative flex-shrink-0 rounded-lg overflow-hidden"
             style={{
               height: `${IMAGE_PREVIEW_SIZE}rem`,
               width: `${IMAGE_PREVIEW_SIZE}rem`,

@@ -20,4 +20,13 @@ const ArrowLeftIcon = () => {
     );
 };
 
-export default ArrowLeftIcon;
+const WhiteArrowLeftIcon = () => {
+    return (
+        <img
+            src="/icons/arrow/arrow-left-dark.png"
+            alt="arrow-left" 
+            className="h-full" 
+        />
+    );
+};
+export { ArrowLeftIcon, WhiteArrowLeftIcon };
