@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import MonthCalendar from "./month-calendar";
+import MonthCalendar from "@/app/components/ui/calendar/month-calendar";
 
 const MultiMonthCalendar: React.FC<{ date: Date, numMonths: number, onClick?: () => void }> = ({ date, numMonths, onClick }) => {
   const [currentDate, setCurrentDate] = useState(date);

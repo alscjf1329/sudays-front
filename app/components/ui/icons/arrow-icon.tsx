@@ -29,4 +29,25 @@ const WhiteArrowLeftIcon = () => {
         />
     );
 };
-export { ArrowLeftIcon, WhiteArrowLeftIcon };
+
+const ArrowRightIcon = () => {
+    const { theme, systemTheme } = useTheme();
+    
+    const isDarkMode = theme === 'system' 
+        ? systemTheme === 'dark'
+        : theme === 'dark';
+
+    const iconPath = isDarkMode 
+        ? "/icons/arrow/arrow-right-dark.png"
+        : "/icons/arrow/arrow-right.png";
+
+    return (
+        <img
+            src={iconPath}
+            alt="arrow-right"
+            className="h-full"
+        />
+    );
+};
+
+export { ArrowLeftIcon, WhiteArrowLeftIcon, ArrowRightIcon };

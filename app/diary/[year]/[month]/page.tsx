@@ -6,8 +6,7 @@ import LoadingBackground from "@/app/components/layout/loading-backgroud";
 import BottomPopup from "@/app/components/ui/bottom-popup";
 import DiaryForm from "@/app/components/ui/diary/diary-form";
 import { SlideBar } from "@/app/components/layout/slide-bar";
-import ArrowRightIcon from "@/app/components/ui/icons/arrow-right-icon";
-import { ArrowLeftIcon } from "@/app/components/ui/icons/arrow-left-icon";
+import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
 
 type Props = {
   params: Promise<{

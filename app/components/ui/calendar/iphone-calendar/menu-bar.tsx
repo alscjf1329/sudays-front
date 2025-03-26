@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { ArrowLeftIcon } from "../../icons/arrow-left-icon";
+import { ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
 
 export const MenuBar = ({ currentDate }: { currentDate: Date }) => {
   return (

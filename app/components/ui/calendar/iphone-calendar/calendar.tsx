@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import { MenuBar } from "./menu-bar";
+import { MenuBar } from "@/app/components/ui/calendar/iphone-calendar/menu-bar";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_TO_SHOW = 12;

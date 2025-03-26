@@ -10,8 +10,8 @@ import {
   horizontalListSortingStrategy
 } from '@dnd-kit/sortable';
 import Image from 'next/image';
-import SortableImage from './sortable-image';
-import { ImageData, IMAGE_PREVIEW_SIZE } from './types';
+import SortableImage from "@/app/components/ui/diary/sortable-image";
+import { ImageData, IMAGE_PREVIEW_SIZE } from "@/app/components/ui/diary/types";
 
 interface ImageListProps {
   imageList: ImageData[];

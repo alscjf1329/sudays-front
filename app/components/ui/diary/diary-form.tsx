@@ -10,11 +10,11 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import ImageList from './image-list';
-import ImageUpload from './image-upload';
-import PictureIcon from '../icons/picture-icon';
-import CheckIcon from '../icons/check-icon';
-import { ImageData, MAX_IMAGES } from './types';
+import ImageList from "@/app/components/ui/diary/image-list";
+import ImageUpload from "@/app/components/ui/diary/image-upload";
+import PictureIcon from "@/app/components/ui/icons/picture-icon";
+import CheckIcon from "@/app/components/ui/icons/check-icon";
+import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
 
 interface DiaryFormProps {
   onSubmit: (data: {
