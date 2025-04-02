@@ -12,18 +12,19 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 import ImageList from "@/app/components/ui/diary/image-list";
 import ImageUpload from "@/app/components/ui/diary/image-upload";
-import PictureIcon from "@/app/components/ui/icons/picture-icon";
-import CheckIcon from "@/app/components/ui/icons/check-icon";
 import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
+import MobileBottomBar from './mobile-bottom-bar';
+import { diaryApi } from '@/app/lib/api/diary';
 
 interface DiaryFormProps {
+  date: Date;
   onSubmit: (data: {
     content: string;
     images: File[];
   }) => void;
 }
 
-export default function DiaryForm({ onSubmit }: DiaryFormProps) {
+export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
   const [content, setContent] = useState('');
   const [imageList, setImageList] = useState<ImageData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -57,6 +58,49 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
       window.visualViewport?.removeEventListener('scroll', onViewportChange);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchDiaryData = async () => {
+      const yyyymmdd = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+      try {
+        const diaryData = await diaryApi.getDiary(yyyymmdd);
+        
+        if (diaryData) {
+          setContent(diaryData.content);
+          
+          // 이미지 URL을 ImageData 형식으로 변환
+          const images = await Promise.all(
+            diaryData.image_urls.map(async (url: string) => {
+              try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('이미지 로드 실패');
+                const blob = await response.blob();
+                const file = new File([blob], url.split('/').pop() || 'image.jpg', { type: blob.type });
+                
+                return {
+                  id: uuidv4(),
+                  file,
+                  preview: url
+                };
+              } catch (error) {
+                console.error('이미지 로드 중 오류:', error);
+                return null;
+              }
+            })
+          );
+          
+          setImageList(images.filter((img): img is ImageData => img !== null));
+        }
+      } catch (error: any) {
+        if (error.response?.status !== 404) {
+          console.error('일기 데이터 조회 중 오류:', error);
+          // TODO: 에러 처리 UI 추가
+        }
+      }
+    };
+
+    fetchDiaryData();
+  }, [date]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -180,31 +224,11 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
         </div>
       </form>
 
-      <div
-        className="md:hidden fixed left-0 right-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm border-t border-[var(--border)] p-2"
-        style={{
-          bottom: `${bottomOffset}px`,
-          zIndex: 50,
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        }}
-      >
-        <div className="flex justify-between items-center p-1">
-          <div
-            className="cursor-pointer"
-            style={{ width: '24px', height: '24px' }}
-            onClick={handleMobileImageClick}
-          >
-            <PictureIcon />
-          </div>
-          <div
-            className="cursor-pointer"
-            style={{ width: '24px', height: '24px' }}
-            onClick={handleSubmit}
-          >
-            <CheckIcon />
-          </div>
-        </div>
-      </div>
+      <MobileBottomBar
+        bottomOffset={bottomOffset}
+        onImageClick={handleMobileImageClick}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 }
