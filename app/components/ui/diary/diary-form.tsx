@@ -15,6 +15,7 @@ import ImageUpload from "@/app/components/ui/diary/image-upload";
 import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
 import MobileBottomBar from './mobile-bottom-bar';
 import { diaryApi } from '@/app/lib/api/diary';
+import { UUID } from 'crypto';
 
 interface DiaryFormProps {
   date: Date;
@@ -68,19 +69,17 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
         if (diaryData) {
           setContent(diaryData.content);
           
-          // 이미지 URL을 ImageData 형식으로 변환
+          // 이미지 ID를 사용하여 API를 통해 이미지 데이터 가져오기
           const images = await Promise.all(
-            diaryData.image_urls.map(async (url: string) => {
+            diaryData.image_ids.map(async (imageId: UUID) => {
               try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('이미지 로드 실패');
-                const blob = await response.blob();
-                const file = new File([blob], url.split('/').pop() || 'image.jpg', { type: blob.type });
+                const blob = await diaryApi.getDiaryImage(imageId);
+                const file = new File([blob], `image-${imageId}.jpg`, { type: blob.type });
                 
                 return {
                   id: uuidv4(),
                   file,
-                  preview: url
+                  preview: URL.createObjectURL(blob)
                 };
               } catch (error) {
                 console.error('이미지 로드 중 오류:', error);

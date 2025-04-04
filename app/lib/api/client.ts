@@ -8,7 +8,11 @@ export const apiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10초 타임아웃 설정
+  withCredentials: true,
+  timeout: 10000,
+  validateStatus: function (status) {
+    return status >= 200 && status < 500; // 500 미만의 모든 상태 코드 허용
+  },
 });
 
 // 요청 인터셉터

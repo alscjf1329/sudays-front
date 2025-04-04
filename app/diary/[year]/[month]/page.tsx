@@ -62,27 +62,14 @@ const diaryPopup = (currentDate: Date, setCurrentDate: (date: Date | null) => vo
   const handleSubmit = async (data: { content: string; images: File[] }) => {
     try {
       const yyyymmdd = `${currentDate.getFullYear()}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getDate()).padStart(2, '0')}`;
-      
+
       // 기존 일기 데이터 확인
-      try {
-        const existingDiary = await diaryApi.getDiary(yyyymmdd);
-        // 기존 데이터가 있으면 수정
-        await diaryApi.updateDiary(existingDiary.id, {
-          content: data.content,
-          images: data.images
-        });
-      } catch (error: any) {
-        // 404 에러면 새로 생성
-        if (error.response?.status === 404) {
-          await diaryApi.saveDiary({
-            content: data.content,
-            images: data.images
-          });
-        } else {
-          throw error;
-        }
-      }
-      
+      await diaryApi.upsertDiary({
+        yyyymmdd: yyyymmdd,
+        content: data.content,
+        images: data.images
+      });
+
       setCurrentDate(null);
     } catch (error) {
       console.error('일기 저장 중 오류 발생:', error);
@@ -126,7 +113,7 @@ export default function monthDiary({ params }: Props) {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  
+
 
   return (
     <div

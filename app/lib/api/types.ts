@@ -1,4 +1,7 @@
+import { UUID } from "crypto";
+
 export interface DiarySaveRequestDTO {
+  yyyymmdd: string;
   content: string;
   images?: File[];
 }
@@ -6,7 +9,7 @@ export interface DiarySaveRequestDTO {
 export interface DiarySaveResponseDTO {
   id: string;
   content: string;
-  image_urls?: string[];
+  image_ids?: UUID[];
   created_at: string;
   updated_at: string;
 }
@@ -14,7 +17,7 @@ export interface DiarySaveResponseDTO {
 export interface DiaryGetResponseDTO {
   id: string;
   content: string;
-  image_urls: string[];
+  image_ids: UUID[];
   created_at: string;
   updated_at: string;
 }
