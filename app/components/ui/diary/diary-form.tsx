@@ -12,18 +12,20 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 import ImageList from "@/app/components/ui/diary/image-list";
 import ImageUpload from "@/app/components/ui/diary/image-upload";
-import PictureIcon from "@/app/components/ui/icons/picture-icon";
-import CheckIcon from "@/app/components/ui/icons/check-icon";
 import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
+import MobileBottomBar from './mobile-bottom-bar';
+import { diaryService } from '@/app/lib/api/diary';
+import { UUID } from 'crypto';
 
 interface DiaryFormProps {
+  date: Date;
   onSubmit: (data: {
     content: string;
     images: File[];
   }) => void;
 }
 
-export default function DiaryForm({ onSubmit }: DiaryFormProps) {
+export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
   const [content, setContent] = useState('');
   const [imageList, setImageList] = useState<ImageData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -57,6 +59,58 @@ export default function DiaryForm({ onSubmit }: DiaryFormProps) {
       window.visualViewport?.removeEventListener('scroll', onViewportChange);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchDiaryData = async () => {
+      const yyyymmdd = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+      try {
+        const diaryData = await diaryService.getDiary(yyyymmdd);
+
+        if (diaryData.data) {
+          setContent(diaryData.data.content);
+
+          // 이미지 ID를 사용하여 API를 통해 이미지 데이터 가져오기
+          const imagePromises = diaryData.data.image_ids.map(async (imageId: UUID) => {
+            try {
+              const blob = await diaryService.getDiaryImage(imageId);
+              const file = new File([blob.data], `image-${imageId}.jpg`, { type: blob.data.type });
+              const previewUrl = URL.createObjectURL(blob.data);
+
+              return {
+                id: uuidv4(),
+                file,
+                preview: previewUrl
+              };
+            } catch (error) {
+              console.error('이미지 로드 중 오류:', error);
+              return null;
+            }
+          });
+
+          const images = await Promise.all(imagePromises);
+          const validImages = images.filter((img): img is ImageData => img !== null);
+
+          // 이전 이미지의 URL 해제
+          setImageList(prev => {
+            prev.forEach(img => URL.revokeObjectURL(img.preview));
+            return validImages;
+          });
+        }
+      } catch (error: any) {
+        if (error.response?.status !== 404) {
+          console.error('일기 데이터 조회 중 오류:', error);
+          // TODO: 에러 처리 UI 추가
+        }
+      }
+    };
+
+    fetchDiaryData();
+
+    // 컴포넌트 언마운트 시 이미지 URL 해제
+    return () => {
+      imageList.forEach(img => URL.revokeObjectURL(img.preview));
+    };
+  }, [date]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
