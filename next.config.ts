@@ -1,4 +1,5 @@
-import type { NextConfig } from "next";
+import { NextConfig } from 'next';
+import path from 'path';
 
 // 1. 플러그인 임포트 영역
 const withPWA = require("next-pwa");
@@ -12,7 +13,11 @@ const pwaConfig = {
   skipWaiting: true,
 };
 
-const nextConfig: NextConfig = {
+const config: NextConfig = {
+  env: {
+    API_URL: process.env.API_URL,
+    // 다른 환경 변수들...
+  },
   // Next.js 15.2.0 설정
   reactStrictMode: true,
   
@@ -32,6 +37,7 @@ const nextConfig: NextConfig = {
       ...config.resolve.alias,
       'react-dom': 'react-dom',
     }
+    config.resolve.alias['@env'] = path.join(__dirname, 'env');
     return config
   },
 
@@ -49,14 +55,12 @@ const nextConfig: NextConfig = {
 
 // 3. 플러그인 적용 함수
 const buildConfig = () => {
-  let config = { ...nextConfig };
+  let finalConfig = { ...config };
   
   // 4. 플러그인 적용 순서 관리
-  config = withPWA(pwaConfig)(config);
-  // config = withPluginB(pluginBConfig)(config);
-  // config = withPluginC(pluginCConfig)(config);
+  finalConfig = withPWA(pwaConfig)(finalConfig);
   
-  return config;
+  return finalConfig;
 };
 
-module.exports = buildConfig();
+export default buildConfig();
