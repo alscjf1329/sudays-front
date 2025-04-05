@@ -14,7 +14,7 @@ import ImageList from "@/app/components/ui/diary/image-list";
 import ImageUpload from "@/app/components/ui/diary/image-upload";
 import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
 import MobileBottomBar from './mobile-bottom-bar';
-import { diaryApi } from '@/app/lib/api/diary';
+import { diaryService } from '@/app/lib/api/diary';
 import { UUID } from 'crypto';
 
 interface DiaryFormProps {
@@ -64,31 +64,37 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
     const fetchDiaryData = async () => {
       const yyyymmdd = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
       try {
-        const diaryData = await diaryApi.getDiary(yyyymmdd);
-        
-        if (diaryData) {
-          setContent(diaryData.content);
-          
+        const diaryData = await diaryService.getDiary(yyyymmdd);
+
+        if (diaryData.data) {
+          setContent(diaryData.data.content);
+
           // 이미지 ID를 사용하여 API를 통해 이미지 데이터 가져오기
-          const images = await Promise.all(
-            diaryData.image_ids.map(async (imageId: UUID) => {
-              try {
-                const blob = await diaryApi.getDiaryImage(imageId);
-                const file = new File([blob], `image-${imageId}.jpg`, { type: blob.type });
-                
-                return {
-                  id: uuidv4(),
-                  file,
-                  preview: URL.createObjectURL(blob)
-                };
-              } catch (error) {
-                console.error('이미지 로드 중 오류:', error);
-                return null;
-              }
-            })
-          );
-          
-          setImageList(images.filter((img): img is ImageData => img !== null));
+          const imagePromises = diaryData.data.image_ids.map(async (imageId: UUID) => {
+            try {
+              const blob = await diaryService.getDiaryImage(imageId);
+              const file = new File([blob.data], `image-${imageId}.jpg`, { type: blob.data.type });
+              const previewUrl = URL.createObjectURL(blob.data);
+
+              return {
+                id: uuidv4(),
+                file,
+                preview: previewUrl
+              };
+            } catch (error) {
+              console.error('이미지 로드 중 오류:', error);
+              return null;
+            }
+          });
+
+          const images = await Promise.all(imagePromises);
+          const validImages = images.filter((img): img is ImageData => img !== null);
+
+          // 이전 이미지의 URL 해제
+          setImageList(prev => {
+            prev.forEach(img => URL.revokeObjectURL(img.preview));
+            return validImages;
+          });
         }
       } catch (error: any) {
         if (error.response?.status !== 404) {
@@ -99,6 +105,11 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
     };
 
     fetchDiaryData();
+
+    // 컴포넌트 언마운트 시 이미지 URL 해제
+    return () => {
+      imageList.forEach(img => URL.revokeObjectURL(img.preview));
+    };
   }, [date]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

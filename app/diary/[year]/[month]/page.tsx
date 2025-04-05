@@ -7,7 +7,7 @@ import BottomPopup from "@/app/components/ui/bottom-popup";
 import DiaryForm from "@/app/components/ui/diary/diary-form";
 import { SlideBar } from "@/app/components/layout/slide-bar";
 import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
-import { diaryApi } from '@/app/lib/api/diary';
+import { diaryService } from '@/app/lib/api/diary';
 
 type Props = {
   params: Promise<{
@@ -64,7 +64,7 @@ const diaryPopup = (currentDate: Date, setCurrentDate: (date: Date | null) => vo
       const yyyymmdd = `${currentDate.getFullYear()}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getDate()).padStart(2, '0')}`;
 
       // 기존 일기 데이터 확인
-      await diaryApi.upsertDiary({
+      await diaryService.upsertDiary({
         yyyymmdd: yyyymmdd,
         content: data.content,
         images: data.images
