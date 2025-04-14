@@ -26,25 +26,50 @@ class ApiClient {
   private setupInterceptors(): void {
     // 응답 인터셉터
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // 토큰이 응답 헤더에 있는 경우 쿠키로 저장
+        const token = response.headers?.authorization;
+        if (token) {
+          const cleanToken = token.replace('Bearer ', '');
+          document.cookie = `token=${cleanToken}; path=/; secure; samesite=strict`;
+        }
+        return response;
+      },
       async (error) => {
-        if (error.response?.status === 401) {
+        const originalRequest = error.config;
+        
+        // 리프레시 토큰 요청 자체가 실패한 경우
+        if (originalRequest.url?.includes('/auth/refresh')) {
+          this.clearTokens();
+          if (!window.location.pathname.includes('/auth/login')) {
+            window.location.href = '/auth/login';
+          }
+          return Promise.reject(error);
+        }
+
+        // 401 에러이고, 이미 재시도하지 않은 요청인 경우
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          
           try {
-            // 401 에러 발생 시 리프레시 토큰으로 액세스 토큰 갱신 시도
-            // 리프레시 토큰은 httpOnly 쿠키에 있으므로 자동으로 전송됨
-            const response = await this.client.post<TokenResponseDTO>('/auth/refresh');
+            const response = await this.client.post<TokenResponseDTO>('/auth/refresh', {}, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
             
             if (response.data && response.headers.authorization) {
               const newToken = response.headers.authorization.replace('Bearer ', '');
-              this.setAccessToken(newToken);
-              // 원래 요청 재시도
-              error.config.headers['Authorization'] = `Bearer ${newToken}`;
-              return this.client(error.config);
+              document.cookie = `token=${newToken}; path=/; secure; samesite=strict`;
+              originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+              return this.client(originalRequest);
             }
           } catch (refreshError) {
-            // 리프레시 토큰 갱신 실패 시 로그아웃 처리
             this.clearTokens();
-            window.location.href = '/auth/login';
+            if (!window.location.pathname.includes('/auth/login')) {
+              window.location.href = '/auth/login';
+            }
+            return Promise.reject(refreshError);
           }
         }
         return Promise.reject(this.handleError(error));
@@ -54,7 +79,17 @@ class ApiClient {
     // 요청 인터셉터 - 모든 요청에 토큰 추가
     this.client.interceptors.request.use(
       (config) => {
-        const token = this.getAccessToken();
+        // 리프레시 토큰 요청인 경우 토큰을 추가하지 않음
+        if (config.url?.includes('/auth/refresh')) {
+          return config;
+        }
+
+        // 쿠키에서 토큰 가져오기
+        const token = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('token='))
+          ?.split('=')[1];
+
         if (token) {
           config.headers['Authorization'] = `Bearer ${token}`;
         }
@@ -64,19 +99,9 @@ class ApiClient {
     );
   }
 
-  // 토큰 관련 메서드들
-  public setAccessToken(token: string): void {
-    localStorage.setItem('accessToken', token);
-  }
-
-  public getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
   public clearTokens(): void {
-    localStorage.removeItem('accessToken');
-    // 리프레시 토큰은 서버에서 httpOnly 쿠키로 관리되므로 
-    // 로그아웃 API 호출 시 서버에서 삭제
+    // 쿠키에서 토큰 삭제
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 
   private handleError(error: any): ApiError {
@@ -98,6 +123,13 @@ class ApiClient {
   public async request<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
     try {
       const response: AxiosResponse<T> = await this.client.request(config);
+      
+      // 토큰이 있는 경우에만 헤더에 포함
+      const headers: Record<string, string> = {};
+      if (response.headers.authorization) {
+        headers.authorization = response.headers.authorization;
+      }
+
       return {
         data: response.data,
         message: response.statusText,
