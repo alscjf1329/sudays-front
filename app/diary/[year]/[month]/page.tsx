@@ -64,11 +64,11 @@ const diaryPopup = (currentDate: Date, setCurrentDate: (date: Date | null) => vo
       const yyyymmdd = `${currentDate.getFullYear()}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getDate()).padStart(2, '0')}`;
 
       // 기존 일기 데이터 확인
-      await diaryService.upsertDiary({
-        yyyymmdd: yyyymmdd,
-        content: data.content,
-        images: data.images
-      });
+      await diaryService.upsertDiary(
+        yyyymmdd,
+        data.content,
+        data.images
+      );
 
       setCurrentDate(null);
     } catch (error) {

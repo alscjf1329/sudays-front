@@ -25,7 +25,7 @@ export default function Download() {
     };
 
     if (!deferredPrompt) {
-      redirect(`/diary/${today.getFullYear()}/${today.getMonth() + 1}`);
+      redirect(`/auth/login`);
     }
 
     checkDevice();
