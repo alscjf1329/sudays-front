@@ -15,4 +15,11 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
   status: number;
+  details?: Record<string, any>;
+  headers?: Record<string, string>;
+}
+
+export interface TokenResponseDTO {
+  access_token: string;
+  message: string;
 } 
