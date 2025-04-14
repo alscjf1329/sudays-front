@@ -30,6 +30,8 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
   const [imageList, setImageList] = useState<ImageData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [bottomOffset, setBottomOffset] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -62,7 +64,11 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
 
   useEffect(() => {
     const fetchDiaryData = async () => {
+      setIsLoading(true);
+      setError(null);
+
       const yyyymmdd = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+      
       try {
         const diaryData = await diaryService.getDiary(yyyymmdd);
 
@@ -70,7 +76,7 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
           setContent(diaryData.data.content);
 
           // 이미지 ID를 사용하여 API를 통해 이미지 데이터 가져오기
-          const imagePromises = diaryData.data.image_ids.map(async (imageId: UUID) => {
+          const imagePromises = diaryData.data.image_ids.map(async (imageId: string) => {
             try {
               const blob = await diaryService.getDiaryImage(imageId);
               const file = new File([blob.data], `image-${imageId}.jpg`, { type: blob.data.type });
@@ -90,17 +96,21 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
           const images = await Promise.all(imagePromises);
           const validImages = images.filter((img): img is ImageData => img !== null);
 
-          // 이전 이미지의 URL 해제
           setImageList(prev => {
             prev.forEach(img => URL.revokeObjectURL(img.preview));
             return validImages;
           });
         }
       } catch (error: any) {
-        if (error.response?.status !== 404) {
+        if (error.response?.status === 401) {
+          setError('인증이 필요합니다. 로그인 페이지로 이동합니다.');
+          window.location.href = '/auth/login';
+        } else if (error.response?.status !== 404) {
+          setError('일기 데이터 조회 중 오류가 발생했습니다.');
           console.error('일기 데이터 조회 중 오류:', error);
-          // TODO: 에러 처리 UI 추가
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -157,12 +167,35 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
     setImageList(prev => prev.filter(img => img.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
-      content,
-      images: imageList.map(img => img.file)
-    });
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // 날짜를 YYYYMMDD 형식으로 생성
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const yyyymmdd = `${year}${month}${day}`;
+      
+      const files = imageList.map(img => img.file);
+      
+      const response = await diaryService.upsertDiary(yyyymmdd, content, files);
+      
+      // API 호출이 성공한 후에만 onSubmit 호출
+      if (response) {
+        onSubmit({
+          content,
+          images: files
+        });
+      }
+    } catch (error: any) {
+      setError('일기 저장 중 오류가 발생했습니다.');
+      console.error('일기 저장 중 오류:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDragStart = (event: any) => {
@@ -189,6 +222,12 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
         onSubmit={handleSubmit}
         className="w-full h-full flex flex-col p-2 gap-4 overflow-y-auto relative pb-20"
       >
+        {error && (
+          <div className="text-red-500 text-sm mb-2">
+            {error}
+          </div>
+        )}
+        
         <div className="w-full">
           <div className="w-full">
             <div className="hidden md:block">
@@ -221,15 +260,17 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
             autoCapitalize="off"
             spellCheck="false"
             placeholder="일상을 기록해보세요."
+            disabled={isLoading}
           />
         </div>
 
         <div className="hidden md:block md:w-full">
           <button
             type="submit"
-            className="w-full flex justify-center items-center p-4 rounded-lg bg-[var(--highlight-secondary)] text-white font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight"
+            className="w-full flex justify-center items-center p-4 rounded-lg bg-[var(--highlight-secondary)] text-white font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            저장하기
+            {isLoading ? '저장 중...' : '저장하기'}
           </button>
         </div>
       </form>
@@ -238,6 +279,7 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
         bottomOffset={bottomOffset}
         onImageClick={handleMobileImageClick}
         onSubmit={handleSubmit}
+        isLoading={isLoading}
       />
     </>
   );
