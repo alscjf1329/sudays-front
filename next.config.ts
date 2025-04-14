@@ -19,7 +19,7 @@ const config: NextConfig = {
     // 다른 환경 변수들...
   },
   // Next.js 15.2.0 설정
-  reactStrictMode: true,
+  reactStrictMode: false,
   
   // turbopack 활성화 (next dev --turbopack 사용 중이므로)
   experimental: {
