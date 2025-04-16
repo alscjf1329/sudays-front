@@ -201,17 +201,18 @@ const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month, onClic
           }}
           style={{ height: `${cellHeight}px` }}
           className={clsx(
-            "flex items-center justify-center relative",
+            "flex items-start justify-start relative",
             "border-b border-[var(--light-border)]",
             dayOfWeek === 0 && "text-red-500",
             dayOfWeek === 6 && "text-blue-500",
-            isToday && "font-bold"
           )}
         >
           <div
             className={clsx(
-              "w-8 h-8 flex items-center justify-center rounded-full",
-              isToday && "text-background bg-[var(--highlight)]"
+              "w-8 h-8 flex p-2",
+              isToday 
+                ? "items-center justify-center rounded-full text-white bg-[var(--highlight)] font-bold"
+                : "items-start justify-start"
             )}
           >
             {day}
