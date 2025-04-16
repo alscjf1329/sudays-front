@@ -46,18 +46,20 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--secondary)] to-[var(--background)]">
       <div className="w-full max-w-md px-4">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">SUDAYS</h1>
-          <p className="text-gray-600 dark:text-gray-300">일정을 쉽게 관리하세요</p>
+          <h1 className="text-4xl font-bold text-[var(--primary)] mb-2">SUDAYS</h1>
+          <p className="text-[var(--muted)]">일정을 쉽게 관리하세요</p>
         </div>
-        <Card className="w-full backdrop-blur-lg bg-white/80 dark:bg-gray-800/80 border-0 shadow-lg rounded-2xl">
+        <Card className="w-full backdrop-blur-lg bg-[var(--background-secondary)]/80 border-[var(--border)] shadow-lg rounded-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">회원가입</CardTitle>
-            <CardDescription className="text-center text-gray-600 dark:text-gray-300">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-2xl font-bold text-center text-[var(--foreground)]">회원가입</CardTitle>
+            </div>
+            <CardDescription className="text-center text-[var(--muted)]">
               이미 계정이 있으신가요?{' '}
-              <Link href="/auth/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/auth/login" className="text-[var(--primary)] hover:underline">
                 로그인
               </Link>
             </CardDescription>
@@ -65,7 +67,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700 dark:text-gray-200">이름</Label>
+                <Label htmlFor="name" className="text-[var(--foreground)]">이름</Label>
                 <Input
                   id="name"
                   name="name"
@@ -74,11 +76,11 @@ export default function SignupPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="bg-[var(--background)]/50 text-[var(--foreground)] border-[var(--border)] rounded-xl focus:ring-2 focus:ring-[var(--primary)]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">이메일</Label>
+                <Label htmlFor="email" className="text-[var(--foreground)]">이메일</Label>
                 <Input
                   id="email"
                   name="email"
@@ -87,11 +89,11 @@ export default function SignupPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="bg-[var(--background)]/50 text-[var(--foreground)] border-[var(--border)] rounded-xl focus:ring-2 focus:ring-[var(--primary)]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700 dark:text-gray-200">비밀번호</Label>
+                <Label htmlFor="password" className="text-[var(--foreground)]">비밀번호</Label>
                 <Input
                   id="password"
                   name="password"
@@ -100,11 +102,11 @@ export default function SignupPage() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="bg-[var(--background)]/50 text-[var(--foreground)] border-[var(--border)] rounded-xl focus:ring-2 focus:ring-[var(--primary)]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-200">비밀번호 확인</Label>
+                <Label htmlFor="confirmPassword" className="text-[var(--foreground)]">비밀번호 확인</Label>
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -113,16 +115,16 @@ export default function SignupPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="bg-white/50 dark:bg-gray-700/50 text-gray-800 dark:text-white border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="bg-[var(--background)]/50 text-[var(--foreground)] border-[var(--border)] rounded-xl focus:ring-2 focus:ring-[var(--primary)]"
                 />
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p className="text-[var(--highlight)] text-sm">{error}</p>}
             </CardContent>
             <CardFooter>
               <Button 
                 content="회원가입" 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] hover:from-[var(--accent)] hover:to-[var(--primary)] text-white rounded-xl py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
               />
             </CardFooter>
           </form>
