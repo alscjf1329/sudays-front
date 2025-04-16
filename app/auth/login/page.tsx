@@ -23,7 +23,7 @@ export default function LoginPage() {
         const response = await authService.refreshToken();
         if (response.status === 200 && response.headers?.authorization) {
           const token = response.headers.authorization.replace('Bearer ', '');
-          localStorage.setItem('token', token);
+          document.cookie = `token=${token}; path=/; max-age=86400`;
           router.push('/diary');
         } else {
           setIsAutoLogin(false);
@@ -50,7 +50,7 @@ export default function LoginPage() {
 
       if (response.status === 200 && response.headers?.authorization) {
         const token = response.headers.authorization.replace('Bearer ', '');
-        localStorage.setItem('token', token);
+        document.cookie = `token=${token}; path=/; max-age=86400`;
         router.push('/diary');
       }
     } catch (err) {
