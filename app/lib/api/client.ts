@@ -27,12 +27,6 @@ class ApiClient {
     // 응답 인터셉터
     this.client.interceptors.response.use(
       (response) => {
-        // 토큰이 응답 헤더에 있는 경우 쿠키로 저장
-        const token = response.headers?.authorization;
-        if (token) {
-          const cleanToken = token.replace('Bearer ', '');
-          document.cookie = `token=${cleanToken}; path=/; secure; samesite=strict`;
-        }
         return response;
       },
       async (error) => {
@@ -60,7 +54,7 @@ class ApiClient {
             
             if (response.data && response.headers.authorization) {
               const newToken = response.headers.authorization.replace('Bearer ', '');
-              document.cookie = `token=${newToken}; path=/; secure; samesite=strict`;
+              document.cookie = `access_token=${newToken}; path=/; secure; samesite=strict`;
               originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
               return this.client(originalRequest);
             }
@@ -87,7 +81,7 @@ class ApiClient {
         // 쿠키에서 토큰 가져오기
         const token = document.cookie
           .split('; ')
-          .find(row => row.startsWith('token='))
+          .find(row => row.startsWith('access_token='))
           ?.split('=')[1];
 
         if (token) {
@@ -101,12 +95,12 @@ class ApiClient {
 
   public clearTokens(): void {
     // 쿠키에서 토큰 삭제
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 
   private handleError(error: any): ApiError {
     if (axios.isAxiosError(error)) {
-      console.log('백엔드 응답:', error.response?.data);
       return {
         message: error.response?.data.detail || error.message,
         code: error.code || 'UNKNOWN_ERROR',

@@ -19,9 +19,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     try {
       const response = await authService.login({ email, password });
 
-      if (response.status === 200 && response.headers?.authorization) {
-        const token = response.headers.authorization.replace('Bearer ', '');
-        document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+      if (response.status === 200) {
         onSuccess();
       }
     } catch (err) {

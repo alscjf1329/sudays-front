@@ -20,10 +20,8 @@ export default function LoginPage() {
       if (!isMounted) return;
 
       try {
-        const response = await authService.refreshToken();
-        if (response.status === 200 && response.headers?.authorization) {
-          const token = response.headers.authorization.replace('Bearer ', '');
-          document.cookie = `token=${token}; path=/; max-age=86400`;
+        const response = await authService.getCurrentUser();
+        if (response.status === 200) {
           router.push('/diary');
         } else {
           setIsAutoLogin(false);
@@ -48,9 +46,7 @@ export default function LoginPage() {
     try {
       const response = await authService.login({ email, password });
 
-      if (response.status === 200 && response.headers?.authorization) {
-        const token = response.headers.authorization.replace('Bearer ', '');
-        document.cookie = `token=${token}; path=/; max-age=86400`;
+      if (response.status === 200) {
         router.push('/diary');
       }
     } catch (err) {

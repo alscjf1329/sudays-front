@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
   }
 
   // 쿠키에서 토큰 확인
-  const token = request.cookies.get('token');
+  const token = request.cookies.get('access_token');
 
   // 토큰이 없는 경우 로그인 페이지로 리다이렉트
   if (!token) {
