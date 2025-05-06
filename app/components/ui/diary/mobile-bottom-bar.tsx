@@ -1,6 +1,3 @@
-import PictureIcon from '@/app/components/ui/icons/picture-icon';
-import CheckIcon from '@/app/components/ui/icons/check-icon';
-
 interface MobileBottomBarProps {
   bottomOffset: number;
   onImageClick: () => void;
@@ -16,18 +13,18 @@ export default function MobileBottomBar({
 }: MobileBottomBarProps) {
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden"
+      className="fixed bottom-0 left-0 right-0 bg-[var(--background-secondary)] border-t border-[var(--border)] md:hidden"
       style={{ bottom: `${bottomOffset}px` }}
     >
       <div className="flex items-center justify-between p-4">
         <button
           type="button"
           onClick={onImageClick}
-          className="p-2 rounded-full hover:bg-gray-100"
+          className="p-2 rounded-full hover:bg-[var(--hover)]"
           disabled={isLoading}
         >
           <svg
-            className="w-6 h-6 text-gray-600"
+            className="w-6 h-6 text-[var(--muted)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -43,7 +40,7 @@ export default function MobileBottomBar({
         <button
           type="submit"
           onClick={onSubmit}
-          className="px-4 py-2 text-white bg-[var(--highlight-secondary)] rounded-lg font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-highlight disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-[var(--primary)] bg-[var(--highlight-secondary)] rounded-lg font-medium hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--highlight)] disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isLoading}
         >
           {isLoading ? '저장 중...' : '저장하기'}

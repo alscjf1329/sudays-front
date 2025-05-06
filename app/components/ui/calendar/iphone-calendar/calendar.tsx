@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { MenuBar } from "@/app/components/ui/calendar/iphone-calendar/menu-bar";
+import MenuSlideBar from "@/app/components/ui/calendar/iphone-calendar/menu-slide-bar";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_TO_SHOW = 12;
@@ -18,10 +19,45 @@ const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month, onClic
   const [currentDate, setCurrentDate] = useState(new Date(year, month - 1, 1));
   const [cellHeight, setCellHeight] = useState(0);
   const [months, setMonths] = useState<Date[]>([]);
+  const [isOpened, setIsOpened] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef(true);
   const isLoading = useRef(false);
   const [containerHeight, setContainerHeight] = useState(0);
+
+  const menuItems = [
+    {
+      id: "settings",
+      label: "설정",
+      icon: "/icons/settings.png",
+      onClick: () => {
+        console.log("설정 메뉴 클릭");
+        setIsOpened(false);
+      },
+    },
+    {
+      id: "profile",
+      label: "프로필",
+      icon: "/icons/profile.png",
+      onClick: () => {
+        console.log("프로필 메뉴 클릭");
+        setIsOpened(false);
+      },
+    },
+    {
+      id: "notification",
+      label: "알림",
+      icon: "/icons/notification.png",
+      onClick: () => {
+        console.log("알림 메뉴 클릭");
+        setIsOpened(false);
+      },
+    },
+  ];
+
+  const handleHamburgerClick = () => {
+    setIsOpened(!isOpened);
+  };
 
   /**
    * ✅ 확대/축소 감지 및 차단
@@ -342,25 +378,36 @@ const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month, onClic
   }, [months]);
 
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-col w-full overflow-y-auto relative"
-      style={{ height: containerHeight ? `${containerHeight}px` : "auto" }}
-    >
-      <div className="sticky top-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm z-50 flex flex-col border-[var(--border)]">
-        <div className="flex flex-col p-2">
-          <MenuBar currentDate={currentDate} />
-          <div className="text-2xl font-bold mt-2">
-            {currentDate.getMonth() + 1}월
+    <>
+      <div
+        ref={containerRef}
+        className="flex flex-col w-full overflow-y-auto relative"
+        style={{ height: containerHeight ? `${containerHeight}px` : "auto" }}
+      >
+        <div className="sticky top-0 bg-[var(--background-secondary)]/80 backdrop-blur-sm z-50 flex flex-col border-[var(--border)]">
+          <div className="flex flex-col p-2">
+            <div className="flex items-center ">
+              <MenuBar currentDate={currentDate} onHamburgerClick={handleHamburgerClick} />
+            </div>
+            <div className="text-2xl font-bold mt-2">
+              {currentDate.getMonth() + 1}월
+            </div>
+          </div>
+          <div className="grid grid-cols-7 border-b border-[var(--border)]">
+            {renderWeekdays()}
           </div>
         </div>
-        <div className="grid grid-cols-7 border-b border-[var(--border)]">
-          {renderWeekdays()}
-        </div>
+
+        {months.map((monthDate, index) => renderMonth(monthDate, index))}
       </div>
 
-      {months.map((monthDate, index) => renderMonth(monthDate, index))}
-    </div>
+      <MenuSlideBar 
+        isOpened={isOpened}
+        setIsOpened={setIsOpened}
+        onHamburgerClick={handleHamburgerClick}
+        menuItems={menuItems}
+      />
+    </>
   );
 };
 

@@ -102,7 +102,7 @@ const BottomPopup: React.FC<PopupProps> = ({ height, children, onClose }) => {
       <div 
         ref={popupRef}
         className="fixed bottom-0 left-0 right-0 z-50 
-          bg-white dark:bg-[#1c1c1e]
+          bg-[var(--background-secondary)]
           rounded-t-[20px] shadow-lg
           will-change-transform
           overflow-hidden"
