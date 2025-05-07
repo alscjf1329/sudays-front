@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { WEEKDAYS } from "@/app/lib/constants/calendar";
+import { WEEKDAYS } from "@/lib/constants/calendar";
 import LoadingBackground from "@/app/components/layout/loading-backgroud";
 import MonthPicker from "@/app/components/ui/calendar/month-picker";
 

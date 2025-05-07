@@ -7,7 +7,7 @@ import BottomPopup from "@/app/components/ui/bottom-popup";
 import DiaryForm from "@/app/components/ui/diary/diary-form";
 import { SlideBar } from "@/app/components/layout/slide-bar";
 import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
-import { diaryService } from "@/app/lib/api/diary";
+import { diaryService } from "@/lib/api/diary";
 
 type Props = {
   params: Promise<{

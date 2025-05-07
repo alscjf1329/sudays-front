@@ -1,13 +1,19 @@
 import { apiClient } from './client';
 import { ApiResponse } from './types';
 
+export interface TokenDTO {
+  access_token: string;
+  token_type: string;
+}
+
 export interface LoginRequestDTO {
   email: string;
   password: string;
 }
 
 export interface LoginResponseDTO {
-  message: string;
+  access_token: string;
+  token_type: string;
 }
 
 export interface SignupRequestDTO {
@@ -22,12 +28,16 @@ export interface SignupResponseDTO {
   nickname: string;
   role: string;
   created_at: string;
-  updated_at: string;
+  updated_at: string | null;
 }
 
 export interface MemberDTO {
+  id: string;
   email: string;
   nickname: string;
+  role: string;
+  created_at: string;
+  updated_at: string | null;
 }
 
 export const authService = {
@@ -57,7 +67,7 @@ export const authService = {
   },
 
   // 토큰 갱신
-  refreshToken: async (): Promise<ApiResponse<LoginResponseDTO>> => {
+  refreshToken: async (): Promise<ApiResponse<TokenDTO>> => {
     return apiClient.request({
       method: 'POST',
       url: '/auth/refresh',
@@ -65,7 +75,7 @@ export const authService = {
   },
 
   // 로그아웃
-  logout: async (): Promise<ApiResponse<LoginResponseDTO>> => {
+  logout: async (): Promise<ApiResponse<void>> => {
     return apiClient.request({
       method: 'POST',
       url: '/auth/logout',
@@ -79,4 +89,4 @@ export const authService = {
       url: '/auth/me',
     });
   },
-};
+}; 

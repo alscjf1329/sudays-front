@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { createPortal } from 'react-dom';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { UUID } from 'crypto';
 
 import DragHandleIcon from "@/app/components/ui/icons/drag-handle-icon";
 import XIcon from "@/app/components/ui/icons/x-icon";
@@ -15,7 +16,7 @@ import { ImageData, IMAGE_PREVIEW_SIZE } from "@/app/components/ui/diary/types";
 
 interface SortableImageProps {
   image: ImageData;
-  handleRemove: (id: string, e: React.MouseEvent) => void;
+  handleRemove: (id: UUID, e: React.MouseEvent) => void;
 }
 
 export default function SortableImage({ image, handleRemove }: SortableImageProps) {

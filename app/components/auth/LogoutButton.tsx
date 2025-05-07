@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/ui/default';
-import { authService } from '@/app/lib/api/auth';
+import { authService } from '@/lib/api/auth';
 
 export default function LogoutButton() {
   const router = useRouter();

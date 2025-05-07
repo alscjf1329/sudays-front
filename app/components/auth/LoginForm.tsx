@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Label, Input } from '@/app/components/ui/default';
-import { authService } from '@/app/lib/api/auth';
+import { authService } from '@/lib/api/auth';
 
 interface LoginFormProps {
   onSuccess: () => void;

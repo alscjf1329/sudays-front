@@ -9,13 +9,13 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { UUID } from 'crypto';
 
 import ImageList from "@/app/components/ui/diary/image-list";
 import ImageUpload from "@/app/components/ui/diary/image-upload";
-import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
+import { ImageData, MAX_IMAGES, MAX_IMAGE_SIZE, ALLOWED_IMAGE_EXTENSIONS } from "@/app/components/ui/diary/types";
 import MobileBottomBar from './mobile-bottom-bar';
-import { diaryService } from '@/app/lib/api/diary';
-import { UUID } from 'crypto';
+import { diaryService } from '@/lib/api/diary';
 
 interface DiaryFormProps {
   date: Date;
@@ -28,7 +28,7 @@ interface DiaryFormProps {
 export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
   const [content, setContent] = useState('');
   const [imageList, setImageList] = useState<ImageData[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<UUID | null>(null);
   const [bottomOffset, setBottomOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,19 +76,21 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
           setContent(diaryData.data.content);
 
           // 이미지 ID를 사용하여 API를 통해 이미지 데이터 가져오기
-          const imagePromises = diaryData.data.image_ids.map(async (imageId: string) => {
+          const imagePromises = diaryData.data.image_ids.map(async (imageId: UUID) => {
             try {
-              const blob = await diaryService.getDiaryImage(imageId);
-              const file = new File([blob.data], `image-${imageId}.jpg`, { type: blob.data.type });
-              const previewUrl = URL.createObjectURL(blob.data);
+              const response = await diaryService.getDiaryImage(imageId);
+              const blob = response.data;
+              const fileExtension = blob.type.split('/')[1] || 'jpg';
+              const file = new File([blob], `image-${imageId}.${fileExtension}`, { type: blob.type });
+              const previewUrl = URL.createObjectURL(blob);
 
               return {
-                id: uuidv4(),
+                id: imageId,
                 file,
                 preview: previewUrl
               };
             } catch (error) {
-              console.error('이미지 로드 중 오류:', error);
+              console.error(`이미지 ${imageId} 로드 중 오류:`, error);
               return null;
             }
           });
@@ -96,16 +98,19 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
           const images = await Promise.all(imagePromises);
           const validImages = images.filter((img): img is ImageData => img !== null);
 
-          setImageList(prev => {
-            prev.forEach(img => URL.revokeObjectURL(img.preview));
-            return validImages;
-          });
+          // 이전 이미지 URL 해제
+          imageList.forEach(img => URL.revokeObjectURL(img.preview));
+          setImageList(validImages);
         }
       } catch (error: any) {
         if (error.response?.status === 401) {
           setError('인증이 필요합니다. 로그인 페이지로 이동합니다.');
           window.location.href = '/auth/login';
-        } else if (error.response?.status !== 404) {
+        } else if (error.response?.status === 404) {
+          // 404는 정상적인 경우이므로 에러로 처리하지 않음
+          setContent('');
+          setImageList([]);
+        } else {
           setError('일기 데이터 조회 중 오류가 발생했습니다.');
           console.error('일기 데이터 조회 중 오류:', error);
         }
@@ -128,6 +133,25 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
 
     if (files.length === 0 || remainingSlots <= 0) return;
 
+    const invalidFiles = files.filter(file => {
+      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+      return !ALLOWED_IMAGE_EXTENSIONS.includes(extension) || file.size > MAX_IMAGE_SIZE;
+    });
+    
+    if (invalidFiles.length > 0) {
+      const invalidFile = invalidFiles[0];
+      const extension = '.' + invalidFile.name.split('.').pop()?.toLowerCase();
+      
+      if (!ALLOWED_IMAGE_EXTENSIONS.includes(extension)) {
+        setError(`지원하지 않는 이미지 형식입니다. 허용된 형식: ${ALLOWED_IMAGE_EXTENSIONS.join(', ')}`);
+      } else if (invalidFile.size > MAX_IMAGE_SIZE) {
+        setError(`이미지 크기가 너무 큽니다. 최대 ${MAX_IMAGE_SIZE/1024/1024}MB까지 허용됩니다.`);
+      }
+      
+      e.target.value = '';
+      return;
+    }
+
     const allowedFiles = files.slice(0, remainingSlots);
 
     const newImages = await Promise.all(
@@ -136,7 +160,7 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
           const reader = new FileReader();
           reader.onloadend = () => {
             resolve({
-              id: uuidv4(),
+              id: `temp_${Date.now()}_${Math.random()}` as UUID,
               file,
               preview: reader.result as string
             });
@@ -162,7 +186,7 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
     input.click();
   };
 
-  const handleRemoveImage = (id: string, e: React.MouseEvent) => {
+  const handleRemoveImage = (id: UUID, e: React.MouseEvent) => {
     e.preventDefault();
     setImageList(prev => prev.filter(img => img.id !== id));
   };
@@ -184,7 +208,14 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
       const response = await diaryService.upsertDiary(yyyymmdd, content, files);
       
       // API 호출이 성공한 후에만 onSubmit 호출
-      if (response) {
+      if (response.data) {
+        // 백엔드에서 받은 UUID로 이미지 목록 업데이트
+        const updatedImageList = imageList.map((img, index) => ({
+          ...img,
+          id: response.data.image_ids[index]
+        }));
+        setImageList(updatedImageList);
+        
         onSubmit({
           content,
           images: files

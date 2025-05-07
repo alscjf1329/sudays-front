@@ -12,14 +12,16 @@ import {
 import Image from 'next/image';
 import SortableImage from "@/app/components/ui/diary/sortable-image";
 import { ImageData, IMAGE_PREVIEW_SIZE } from "@/app/components/ui/diary/types";
+import { useCallback, useState } from 'react';
+import { UUID } from 'crypto';
 
 interface ImageListProps {
   imageList: ImageData[];
-  handleRemoveImage: (id: string, e: React.MouseEvent) => void;
+  handleRemoveImage: (id: UUID, e: React.MouseEvent) => void;
   sensors: any;
   handleDragStart: (event: any) => void;
   handleDragEnd: (event: any) => void;
-  activeId: string | null;
+  activeId: UUID | null;
 }
 
 export default function ImageList({
@@ -30,6 +32,45 @@ export default function ImageList({
   handleDragEnd,
   activeId
 }: ImageListProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setTouchStart(touch.clientX);
+      setTouchEnd(touch.clientX);
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setTouchEnd(e.touches[0].clientX);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentIndex < imageList.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else if (isRightSwipe && currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  }, [touchStart, touchEnd, currentIndex, imageList.length]);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  }, []);
+
   return (
     <DndContext
       sensors={sensors}
