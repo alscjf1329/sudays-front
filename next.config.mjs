@@ -1,9 +1,12 @@
-import { NextConfig } from 'next';
+import pkg from 'next';
+const { NextConfig } = pkg;
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // 1. 플러그인 임포트 영역
-const withPWA = require("next-pwa");
-// 추가 플러그인들...
+import withPWA from "next-pwa";
 
 // 2. 플러그인 설정 영역
 const pwaConfig = {
@@ -13,7 +16,7 @@ const pwaConfig = {
   skipWaiting: true,
 };
 
-const config: NextConfig = {
+const config = {
   env: {
     API_URL: process.env.API_URL,
     // 다른 환경 변수들...
@@ -63,4 +66,4 @@ const buildConfig = () => {
   return finalConfig;
 };
 
-export default buildConfig();
+export default buildConfig(); 
