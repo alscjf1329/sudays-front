@@ -19,35 +19,35 @@
 
 .light {
   --background: #ffffff;
-  --menu-color: #3b82f6;           /* 기존 블루 */
-  --background-secondary: #f8f8f8;
-  --highlight: #3b82f6;
-  --foreground: #171717;
-  --primary: #3b82f6;
-  --secondary: #f3f4f6;
-  --accent: #60a5fa;
-  --muted: #9ca3af;
-  --border: #e5e5e5;
-  --light-border: #f0f0f0;
-  --hover: #f5f5f5;
-  --highlight-secondary: #93c5fd;  /* 밝은 블루 보조 강조 */
+  --background-secondary: #f2f2f7;
+  --foreground: #000000;
+  --primary: #007aff;              /* iOS 기본 블루 */
+  --secondary: #8e8e93;            /* iOS 세컨더리 텍스트 */
+  --muted: #c7c7cc;               /* iOS 비활성 텍스트 */
+  --menu-color: #007aff;
+  --highlight: #007aff;
+  --highlight-secondary: #5ac8fa;  /* iOS 밝은 블루 */
+  --accent: #0a84ff;              /* iOS 그린 */
+  --border: #c6c6c8;
+  --light-border: #e5e5ea;
+  --hover: #f2f2f7;
 }
 
 /* 다크 모드 */
 .dark {
   --background: #000000;
   --background-secondary: #1c1c1e;
-  --menu-color: #FF4539;           /* 주요 강조색 (Apple 스타일 빨강) */
-  --highlight: #FF4539;
-  --highlight-secondary: #FF6B57;  /* 부드러운 밝은 빨강 */
-  --foreground: #ffffff;           /* 주요 텍스트 */
-  --primary: #ffffff;              /* 버튼 등 텍스트 강조 */
-  --secondary: #7c7c7c;            /* 부 텍스트 */
-  --accent: #D1D1D6;               /* 테두리/분리선 */
-  --muted: #3A3A3C;                /* 비활성 요소 */
-  --border: #2C2C2E;
-  --light-border: #1C1C1E;
-  --hover: #222222;
+  --foreground: #ffffff;
+  --primary: #0a84ff;              /* iOS 다크모드 블루 */
+  --secondary: #8e8e93;            /* iOS 다크모드 세컨더리 */
+  --muted: #3a3a3c;               /* iOS 다크모드 비활성 */
+  --menu-color: #ff453a;           /* iOS 레드 */
+  --highlight: #ff453a;
+  --highlight-secondary: #ff6961;  /* iOS 밝은 레드 */
+  --accent: #0a84ff;              /* iOS 다크모드 그린 */
+  --border: #38383a;
+  --light-border: #2c2c2e;
+  --hover: #1c1c1e;
 }
 
 body {

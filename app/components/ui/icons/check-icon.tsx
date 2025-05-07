@@ -10,8 +10,8 @@ const CheckIcon = () => {
         : theme === 'dark';
 
     const iconPath = isDarkMode 
-        ? "/icons/check/check-icon-dark.png"
-        : "/icons/check/check-icon.png";
+        ? "/icons/check/check-dark.png"
+        : "/icons/check/check.png";
 
     return (
         <img

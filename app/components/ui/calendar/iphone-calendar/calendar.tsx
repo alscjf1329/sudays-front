@@ -5,6 +5,7 @@ import clsx from "clsx";
 import dynamic from "next/dynamic";
 import { MenuBar } from "@/app/components/ui/calendar/iphone-calendar/menu-bar";
 import MenuSlideBar from "@/app/components/ui/calendar/iphone-calendar/menu-slide-bar";
+import { SettingsIcon } from "@/app/components/ui/icons/settings-icon";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_TO_SHOW = 12;
@@ -29,30 +30,12 @@ const BaseIphoneCalendar: React.FC<IphoneCalendarProps> = ({ year, month, onClic
     {
       id: "settings",
       label: "설정",
-      icon: "/icons/settings.png",
+      icon: <SettingsIcon />,
       onClick: () => {
         console.log("설정 메뉴 클릭");
         setIsOpened(false);
       },
-    },
-    {
-      id: "profile",
-      label: "프로필",
-      icon: "/icons/profile.png",
-      onClick: () => {
-        console.log("프로필 메뉴 클릭");
-        setIsOpened(false);
-      },
-    },
-    {
-      id: "notification",
-      label: "알림",
-      icon: "/icons/notification.png",
-      onClick: () => {
-        console.log("알림 메뉴 클릭");
-        setIsOpened(false);
-      },
-    },
+    }
   ];
 
   const handleHamburgerClick = () => {

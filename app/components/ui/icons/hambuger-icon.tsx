@@ -1,9 +1,25 @@
-export const HamburgerIcon = ({ onClick }: { onClick?: () => void }) => {
+"use client";
+
+import { useTheme } from "next-themes";
+
+const HamburgerIcon = () => {
+    const { theme, systemTheme } = useTheme();
+
+    const isDarkMode = theme === 'system'
+        ? systemTheme === 'dark'
+        : theme === 'dark';
+
+    const iconPath = isDarkMode
+        ? "/icons/menu/hamburger-dark.png"
+        : "/icons/menu/hamburger.png";
+
     return (
-        <div className="w-5 h-5 text-foreground/80 flex items-center justify-center" onClick={onClick}>
-            <img
-                src="/icons/menu-hamburger.png"
-                alt="menu-hamburger" className="w-full" />
-        </div>
+        <img
+            src={iconPath}
+            alt="hamburger"
+            className="w-full h-full"
+        />
     );
 };
+
+export { HamburgerIcon };

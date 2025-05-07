@@ -2,24 +2,24 @@
 
 import { useTheme } from "next-themes";
 
-const PictureIcon = () => {
+const SettingsIcon = () => {
     const { theme, systemTheme } = useTheme();
-    
-    const isDarkMode = theme === 'system' 
+
+    const isDarkMode = theme === 'system'
         ? systemTheme === 'dark'
         : theme === 'dark';
 
-    const iconPath = isDarkMode 
-        ? "/icons/picture/picture-dark.png"
-        : "/icons/picture/picture.png";
+    const iconPath = isDarkMode
+        ? "/icons/menu/settings-dark.png"
+        : "/icons/menu/settings.png";
 
     return (
         <img
             src={iconPath}
-            alt="picture"
+            alt="settings"
             className="w-full h-full"
         />
     );
 };
 
-export default PictureIcon;
+export { SettingsIcon };

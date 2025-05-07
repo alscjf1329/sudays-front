@@ -6,7 +6,7 @@ import { useMediaQuery } from "@/app/hooks/use-media-query";
 interface MenuItem {
   id: string;
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   onClick?: () => void;
 }
 
@@ -37,7 +37,7 @@ const MenuSlideBar: React.FC<MenuSlideBarProps> = ({
           <div className="text-2xl font-bold text-[var(--foreground)]">메뉴</div>
           <div 
             className={clsx(    
-              "w-8 h-8 flex items-center justify-center rounded-lg",
+              "w-6 h-6 flex items-center justify-center rounded-lg",
               "transition-colors duration-200",
               "hover:bg-[var(--hover)]",
               "cursor-pointer"
@@ -60,7 +60,9 @@ const MenuSlideBar: React.FC<MenuSlideBarProps> = ({
                 )}
                 onClick={item.onClick}
               >
-                <img src={item.icon} alt={item.label} className="w-6 h-6 mr-3" />
+                <div className="w-6 h-6 mr-3">
+                  {item.icon}
+                </div>
                 <span className="text-lg">{item.label}</span>
               </li>
             ))}

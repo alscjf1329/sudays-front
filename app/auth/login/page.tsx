@@ -56,28 +56,28 @@ export default function LoginPage() {
 
   if (isAutoLogin) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--background-secondary)] to-[var(--background)]">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">SUDAYS</h1>
-          <p className="text-slate-600 dark:text-slate-300">로그인 중...</p>
+          <h1 className="text-4xl font-bold text-[var(--primary)] mb-2">SUDAYS</h1>
+          <p className="text-[var(--muted)]">로그인 중...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--secondary)] to-[var(--background)]">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[var(--background-secondary)] to-[var(--background)]">
       <div className="w-full max-w-md px-4">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-[var(--primary)] mb-2">SUDAYS</h1>
-          <p className="text-[var(--muted)]">일정을 쉽게 관리하세요</p>
+          <p className="text-[var(--secondary)]">일정을 쉽게 관리하세요</p>
         </div>
         <Card className="w-full backdrop-blur-lg bg-[var(--background-secondary)]/80 border-[var(--border)] shadow-lg rounded-2xl">
           <CardHeader className="space-y-1">
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl font-bold text-center text-[var(--foreground)]">로그인</CardTitle>
             </div>
-            <CardDescription className="text-center text-[var(--muted)]">
+            <CardDescription className="text-center text-[var(--secondary)]">
               계정이 없으신가요?{' '}
               <Link href="/auth/signup" className="text-[var(--primary)] hover:underline">
                 회원가입
@@ -120,7 +120,7 @@ export default function LoginPage() {
               <Button
                 content="로그인"
                 type="submit"
-                className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] hover:from-[var(--accent)] hover:to-[var(--primary)] text-white rounded-xl py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] hover:from-[var(--accent)] hover:to-[var(--primary)] text-[var(--background)] rounded-xl py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
               />
             </CardFooter>
           </form>
