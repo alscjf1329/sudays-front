@@ -1,12 +1,12 @@
 "use client";
 
 import { use, useEffect, useRef, useState } from "react";
-import IphoneCalendar from "@/app/components/ui/calendar/iphone-calendar/calendar";
+import IphoneCalendar from "@/app/components/features/calendar/iphone-calendar/calendar";
 import LoadingBackground from "@/app/components/layout/loading-backgroud";
-import BottomPopup from "@/app/components/ui/bottom-popup";
-import DiaryForm from "@/app/components/ui/diary/diary-form";
+import BottomPopup from "@/app/components/common/bottom-popup";
+import DiaryForm from "@/app/components/features/diary/diary-form";
 import { SlideBar } from "@/app/components/layout/slide-bar";
-import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
+import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/common/icons/arrow-icon";
 import { diaryService } from "@/lib/api/diary";
 
 type Props = {

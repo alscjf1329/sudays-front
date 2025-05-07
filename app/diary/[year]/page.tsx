@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, use } from "react";
-import YearCalendar from "@/app/components/ui/calendar/year-calendar";
+import YearCalendar from "@/app/components/features/calendar/year-calendar";
 import { redirect } from "next/navigation";
 
 type Props = {

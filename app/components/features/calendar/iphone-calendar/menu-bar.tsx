@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { HamburgerIcon } from "@/app/components/ui/icons/hambuger-icon";
+import { HamburgerIcon } from "@/app/components/common/icons/hambuger-icon";
 import { redirect } from "next/navigation";
 
 interface MenuBarProps {

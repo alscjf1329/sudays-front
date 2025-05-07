@@ -11,9 +11,9 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { UUID } from 'crypto';
 
-import ImageList from "@/app/components/ui/diary/image-list";
-import ImageUpload from "@/app/components/ui/diary/image-upload";
-import { ImageData, MAX_IMAGES, MAX_IMAGE_SIZE, ALLOWED_IMAGE_EXTENSIONS } from "@/app/components/ui/diary/types";
+import ImageList from "@/app/components/features/diary/image-list";
+import ImageUpload from "@/app/components/features/diary/image-upload";
+import { ImageData, MAX_IMAGES, MAX_IMAGE_SIZE, ALLOWED_IMAGE_EXTENSIONS } from "@/app/components/features/diary/types";
 import MobileBottomBar from './mobile-bottom-bar';
 import { diaryService } from '@/lib/api/diary';
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { WEEKDAYS } from "@/lib/constants/calendar";
 import LoadingBackground from "@/app/components/layout/loading-backgroud";
-import MonthPicker from "@/app/components/ui/calendar/month-picker";
+import MonthPicker from "@/app/components/features/calendar/month-picker";
 
 const SlideCalendar: React.FC<{ date: Date }> = ({ date }) => {
   const [isOpen, setIsOpen] = useState(false);

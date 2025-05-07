@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
+import { ArrowRightIcon, ArrowLeftIcon } from "@/app/components/common/icons/arrow-icon";
 
 const MonthPicker: React.FC<{date: Date, setDate: (date: Date) => void }> = ({ date, setDate }) => {
   const months = Array.from({ length: 12 }, (_, i) => i);

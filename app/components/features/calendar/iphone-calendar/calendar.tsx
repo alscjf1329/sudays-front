@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import { MenuBar } from "@/app/components/ui/calendar/iphone-calendar/menu-bar";
-import MenuSlideBar from "@/app/components/ui/calendar/iphone-calendar/menu-slide-bar";
-import { SettingsIcon } from "@/app/components/ui/icons/settings-icon";
+import { MenuBar } from "@/app/components/features/calendar/iphone-calendar/menu-bar";
+import MenuSlideBar from "@/app/components/features/calendar/iphone-calendar/menu-slide-bar";
+import { SettingsIcon } from "@/app/components/common/icons/settings-icon";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_TO_SHOW = 12;

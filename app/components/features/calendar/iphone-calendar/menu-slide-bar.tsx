@@ -1,4 +1,4 @@
-import { HamburgerIcon } from "@/app/components/ui/icons/hambuger-icon";
+import { HamburgerIcon } from "@/app/components/common/icons/hambuger-icon";
 import { SlideBar } from "@/app/components/layout/slide-bar";
 import clsx from "clsx";
 import { useMediaQuery } from "@/app/hooks/use-media-query";

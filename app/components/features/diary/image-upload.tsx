@@ -1,6 +1,6 @@
 'use client';
 
-import { ImageData, MAX_IMAGES } from "@/app/components/ui/diary/types";
+import { ImageData, MAX_IMAGES } from "@/app/components/features/diary/types";
 
 interface ImageUploadProps {
   imageList: ImageData[];

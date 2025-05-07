@@ -7,12 +7,12 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { UUID } from 'crypto';
 
-import DragHandleIcon from "@/app/components/ui/icons/drag-handle-icon";
-import XIcon from "@/app/components/ui/icons/x-icon";
-import { WhiteArrowLeftIcon } from "@/app/components/ui/icons/arrow-icon";
+import DragHandleIcon from "@/app/components/common/icons/drag-handle-icon";
+import XIcon from "@/app/components/common/icons/x-icon";
+import { WhiteArrowLeftIcon } from "@/app/components/common/icons/arrow-icon";
 import LoadingLayout from "@/app/components/layout/loading-layout";
 import LoadingBackground from "@/app/components/layout/loading-backgroud";
-import { ImageData, IMAGE_PREVIEW_SIZE } from "@/app/components/ui/diary/types";
+import { ImageData, IMAGE_PREVIEW_SIZE } from "@/app/components/features/diary/types";
 
 interface SortableImageProps {
   image: ImageData;
