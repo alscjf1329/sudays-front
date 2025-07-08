@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { DIARY_ROUTES } from './lib/constants/routes';
 
 // 인증이 필요없는 경로 목록
 const publicPaths = [
-  '/auth/login',
-  '/auth/signup',
-  '/download',
-  '/'
+  DIARY_ROUTES.AUTH.LOGIN,
+  DIARY_ROUTES.AUTH.SIGNUP
 ];
 
 export function middleware(request: NextRequest) {
@@ -23,7 +22,7 @@ export function middleware(request: NextRequest) {
   }
 
   // public 경로인 경우 인증 체크를 건너뜁니다
-  if (publicPaths.some(path => pathname === path || (path !== '/' && pathname.startsWith(path + '/')))) {
+  if (publicPaths.some(path => pathname === path || pathname.startsWith(path + '/'))) {
     return NextResponse.next();
   }
 
@@ -32,7 +31,7 @@ export function middleware(request: NextRequest) {
 
   // 토큰이 없는 경우 로그인 페이지로 리다이렉트
   if (!token) {
-    const loginUrl = new URL('/auth/login', request.url);
+    const loginUrl = new URL(DIARY_ROUTES.AUTH.LOGIN, request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }

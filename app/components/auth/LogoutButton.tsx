@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/common/default';
 import { authService } from '@/lib/api/auth';
+import { DIARY_ROUTES } from '@/lib/constants/routes';
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function LogoutButton() {
     // 쿠키에서 토큰 삭제
     authService.logout();
     // 로그인 페이지로 리다이렉트 
-    router.push('/auth/login');
+    router.push(DIARY_ROUTES.AUTH.LOGIN);
   };
 
   return (

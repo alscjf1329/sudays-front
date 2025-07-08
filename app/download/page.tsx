@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import InstallPopup from "./components/install-popup";
 import { redirect } from "next/navigation";
+import { DIARY_ROUTES } from "@/lib/constants/routes";
 
 function isPWA() {
   return (
@@ -25,7 +26,7 @@ export default function Download() {
     };
 
     if (!deferredPrompt) {
-      redirect(`/auth/login`);
+      redirect(DIARY_ROUTES.AUTH.LOGIN);
     }
 
     checkDevice();

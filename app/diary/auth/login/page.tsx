@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Label, Input } from '@/app/components/common/default';
 import { authService } from '@/lib/api/auth';
+import { AUTH_ROUTES, DIARY_ROUTES } from '@/lib/constants';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function LoginPage() {
       try {
         const response = await authService.getCurrentUser();
         if (response.status === 200) {
-          router.push('/diary');
+          router.push(DIARY_ROUTES.ROOT);
         } else {
           setIsAutoLogin(false);
         }
@@ -32,7 +33,7 @@ export default function LoginPage() {
     };
 
     // 로그인 페이지에서만 리프레시 토큰 체크
-    if (window.location.pathname === '/auth/login') {
+    if (window.location.pathname === AUTH_ROUTES.LOGIN) {
       checkAuth();
     }
 
@@ -47,7 +48,7 @@ export default function LoginPage() {
       const response = await authService.login({ email, password });
 
       if (response.status === 200) {
-        router.push('/diary');
+        router.push(DIARY_ROUTES.ROOT);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그인에 실패했습니다. 다시 시도해주세요.');
@@ -79,8 +80,8 @@ export default function LoginPage() {
             </div>
             <CardDescription className="text-center text-[var(--secondary)]">
               계정이 없으신가요?{' '}
-              <Link href="/auth/signup" className="text-[var(--primary)] hover:underline">
-                회원가입
+              <Link href={AUTH_ROUTES.SIGNUP} className="text-[var(--primary)] hover:underline">
+                회원가입  
               </Link>
             </CardDescription>
           </CardHeader>

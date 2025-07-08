@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Label, Input } from '@/app/components/common/default';
 import { authService } from '@/lib/api/auth';
+import { AUTH_ROUTES } from '@/lib/constants';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -33,7 +34,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">로그인</CardTitle>
         <CardDescription className="text-center text-gray-600 dark:text-gray-300">
           계정이 없으신가요?{' '}
-          <Link href="/auth/signup" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <Link href={AUTH_ROUTES.SIGNUP} className="text-blue-600 dark:text-blue-400 hover:underline">
             회원가입
           </Link>
         </CardDescription>

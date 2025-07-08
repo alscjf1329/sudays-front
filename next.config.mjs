@@ -8,12 +8,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // 1. 플러그인 임포트 영역
 import withPWA from "next-pwa";
 
-// 2. 플러그인 설정 영역
-const pwaConfig = {
+// 2. Diary PWA 설정
+const diaryPWAConfig = {
   dest: "public",
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+  sw: '/diary/sw.js',
+  scope: '/diary',
+  // 아래는 모두 삭제!
+  // name: 'SUDAYS Diary',
+  // short_name: 'SUDAYS',
+  // description: 'SUDAYS 일기 앱 - 인증 포함',
+  // theme_color: '#000000',
+  // background_color: '#ffffff',
+  // display: 'standalone',
+  // orientation: 'portrait',
+  // icons: [ ... ]
 };
 
 const config = {
@@ -56,12 +67,12 @@ const config = {
   },
 };
 
-// 3. 플러그인 적용 함수
+// 3. Diary PWA 플러그인 적용
 const buildConfig = () => {
   let finalConfig = { ...config };
   
-  // 4. 플러그인 적용 순서 관리
-  finalConfig = withPWA(pwaConfig)(finalConfig);
+  // Diary PWA 플러그인 적용
+  finalConfig = withPWA(diaryPWAConfig)(finalConfig);
   
   return finalConfig;
 };

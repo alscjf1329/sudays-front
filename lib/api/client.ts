@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiConfig, ApiError, ApiResponse, TokenResponseDTO } from './types';
+import { DIARY_ROUTES } from '../constants/routes';
 
 class ApiClient {
   private client: AxiosInstance;
@@ -35,8 +36,8 @@ class ApiClient {
         // 리프레시 토큰 요청 자체가 실패한 경우
         if (originalRequest.url?.includes('/auth/refresh')) {
           this.clearTokens();
-          if (!window.location.pathname.includes('/auth/login')) {
-            window.location.href = '/auth/login';
+          if (!window.location.pathname.includes(DIARY_ROUTES.AUTH.LOGIN)) {
+            window.location.href = DIARY_ROUTES.AUTH.LOGIN;
           }
           return Promise.reject(error);
         }
@@ -60,8 +61,8 @@ class ApiClient {
             }
           } catch (refreshError) {
             this.clearTokens();
-            if (!window.location.pathname.includes('/auth/login')) {
-              window.location.href = '/auth/login';
+            if (!window.location.pathname.includes(DIARY_ROUTES.AUTH.LOGIN)) {
+              window.location.href = DIARY_ROUTES.AUTH.LOGIN;
             }
             return Promise.reject(refreshError);
           }

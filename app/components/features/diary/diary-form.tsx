@@ -16,6 +16,7 @@ import ImageUpload from "@/app/components/features/diary/image-upload";
 import { ImageData, MAX_IMAGES, MAX_IMAGE_SIZE, ALLOWED_IMAGE_EXTENSIONS } from "@/app/components/features/diary/types";
 import MobileBottomBar from './mobile-bottom-bar';
 import { diaryService } from '@/lib/api/diary';
+import { DIARY_ROUTES } from '@/lib/constants/routes';
 
 interface DiaryFormProps {
   date: Date;
@@ -105,7 +106,7 @@ export default function DiaryForm({ date, onSubmit }: DiaryFormProps) {
       } catch (error: any) {
         if (error.response?.status === 401) {
           setError('인증이 필요합니다. 로그인 페이지로 이동합니다.');
-          window.location.href = '/auth/login';
+          window.location.href = DIARY_ROUTES.AUTH.LOGIN;
         } else if (error.response?.status === 404) {
           // 404는 정상적인 경우이므로 에러로 처리하지 않음
           setContent('');

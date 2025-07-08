@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Label, Input } from '@/app/components/common/default';
 import { authService } from '@/lib/api/auth';
+import { AUTH_ROUTES } from '@/lib/constants';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function SignupPage() {
       });
       
       if (response.status === 201) {
-        router.push('/auth/login');
+        router.push(AUTH_ROUTES.LOGIN);
       }
     } catch (err) {
       setError('회원가입에 실패했습니다. 다시 시도해주세요.');
@@ -59,7 +60,7 @@ export default function SignupPage() {
             </div>
             <CardDescription className="text-center text-[var(--muted)]">
               이미 계정이 있으신가요?{' '}
-              <Link href="/auth/login" className="text-[var(--primary)] hover:underline">
+              <Link href={AUTH_ROUTES.LOGIN} className="text-[var(--primary)] hover:underline">
                 로그인
               </Link>
             </CardDescription>

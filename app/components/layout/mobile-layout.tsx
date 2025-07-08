@@ -1,6 +1,3 @@
-import { ThemeSwitcher } from "../ui/theme-switcher";
-import { TopBar, TopBarContainer } from "./tob-bar";
-
 type MobileLayoutProps = {
   children: React.ReactNode;
 };

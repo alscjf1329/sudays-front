@@ -1,22 +1,29 @@
 'use client'
 
 import { ThemeProvider } from "@/app/components/theme/theme-provider"
-import { MobileLayout } from "./components/layout/mobile-layout";
+import { MobileLayout } from "@/app/components/layout/mobile-layout";
 import { useState, useEffect } from "react";
-import { usePathname } from 'next/navigation';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function DiaryLayout({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
   }, [])
 
-  // Diary PWA 경로인 경우 별도 레이아웃 적용 (diary/layout.tsx에서 처리)
-  if (pathname?.startsWith('/diary')) {
-    return children;
-  }
+  // Diary PWA 서비스 워커 등록
+  useEffect(() => {
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      navigator.serviceWorker
+        .register('/diary/sw.js', { scope: '/diary/' })
+        .then((registration) => {
+          console.log('Diary PWA Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.error('Diary PWA Service Worker registration failed:', error);
+        });
+    }
+  }, []);
 
   if (!mounted) return (
     <html lang="ko" suppressHydrationWarning>
@@ -30,12 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="/diary/manifest.json" />
         <meta name="theme-color" content="#000000" />
-        <link rel="apple-touch-icon" href="/icons/sudays-icon-192.png" />
+        <link rel="apple-touch-icon" href="/icons/diary-icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-        <meta name="apple-mobile-web-app-title" content="SUDAYS" />
+        <meta name="apple-mobile-web-app-title" content="SUDAYS Diary" />
       </head>
       <body>
         <ThemeProvider
@@ -51,4 +58,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   )
-}
+} 

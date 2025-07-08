@@ -1,0 +1,31 @@
+{
+  "name": "SUDAYS Diary",
+  "short_name": "SUDAYS",
+  "description": "SUDAYS 일기 앱 - 인증 포함",
+  "icons": [
+    {
+      "src": "/icons/sudays-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/sudays-icon-96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "/icons/sudays-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "prefer_related_applications": false,
+  "start_url": "/diary",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/diary",
+  "lang": "ko"
+} 
